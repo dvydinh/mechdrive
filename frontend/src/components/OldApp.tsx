@@ -5,7 +5,7 @@ import { ModuleMotor } from "./ModuleMotor";
 import { ModuleChain } from "./ModuleChain";
 import { ModuleGearbox } from "./ModuleGearbox";
 import { ModuleOptimizer } from "./ModuleOptimizer";
-import { Chatbot } from "./Chatbot";
+
 import { ReportPanel } from "./ReportPanel";
 import { HistoryPage } from "./HistoryPage";
 import { AuthScreen } from "./AuthScreen";
@@ -40,7 +40,7 @@ export default function App() {
           {active === "chain" && <ModuleChain onGoto={setActive} aiResult={aiResult} />}
           {active === "gearbox" && <ModuleGearbox onGoto={setActive} aiResult={aiResult} currentScheme={currentScheme} />}
           {active === "report" && <ReportPanel user={user} currentScheme={currentScheme} onGoto={setActive} />}
-          {active === "chatbot" && <Chatbot />}
+
           {active === "history" && <HistoryPage user={user} />}
         </main>
       </div>

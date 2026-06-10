@@ -11,7 +11,7 @@ export const STEP_LABEL: Record<ModuleKey, string> = {
   chain:     "Xích",
   gearbox:   "Bánh răng",
   report:    "Báo cáo",
-  chatbot:   "Chatbot",
+
   history:   "Lịch sử",
 };
 
@@ -30,7 +30,7 @@ export function WorkflowProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<Ctx>(() => {
     const isUnlocked = (k: ModuleKey) => {
-      if (k === "chatbot" || k === "history") return true;
+      if (k === "history") return true;
       const i = PIPELINE.indexOf(k);
       if (i <= 0) return true;
       return done.has(PIPELINE[i - 1]);

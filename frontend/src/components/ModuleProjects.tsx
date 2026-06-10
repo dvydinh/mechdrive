@@ -9,6 +9,13 @@ import { createClient } from "@/utils/supabase/client";
 const statusTone = { draft: "stone", ok: "green", fail: "rose" } as const;
 const statusLabel = { draft: "Nháp", ok: "Đạt", fail: "Chưa đạt" } as const;
 
+function getProjectStatus(schemes: Scheme[]): { tone: "stone" | "green" | "rose" | "amber", label: string } {
+  if (!schemes || schemes.length === 0) return { tone: "stone", label: "Trống" };
+  if (schemes.some(s => s.status === "ok")) return { tone: "green", label: "Hoàn thành" };
+  if (schemes.some(s => s.status === "fail")) return { tone: "rose", label: "Chưa đạt" };
+  return { tone: "amber", label: "Đang nháp" };
+}
+
 export function ModuleProjects({ onGoto, user, onSetScheme }: { onGoto?: (k: any) => void; user?: any; onSetScheme?: (s: {projectID: number; schemeNo: number} | null) => void }) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [creating, setCreating] = useState(false);
@@ -98,12 +105,48 @@ export function ModuleProjects({ onGoto, user, onSetScheme }: { onGoto?: (k: any
     }
   };
 
-  const remove = async (id: string) => {
-    const { error } = await supabase.from("PROJECT").delete().eq("projectID", id);
-    if (error) {
-      setError("Lỗi xoá dự án: " + error.message);
-    } else {
-      setProjects(projects.filter((p) => p.projectID !== id));
+  const remove = async (id: string | number) => {
+    try {
+      // Delete dependencies manually to bypass missing CASCADE
+      const { error: e1 } = await supabase.from("GEAR_TRANS").delete().eq("projectID", id);
+      const { error: e2 } = await supabase.from("CHAIN_TRANS").delete().eq("projectID", id);
+      const { error: e3 } = await supabase.from("TRANSMISSION").delete().eq("projectID", id);
+      const { error: e4 } = await supabase.from("DESIGN_SCHEME").delete().eq("projectID", id);
+      
+      const { error } = await supabase.from("PROJECT").delete().eq("projectID", id);
+      if (error) {
+        console.error("Delete Project Error:", error);
+        alert("Lỗi xoá dự án (Database): " + error.message);
+        setError("Lỗi xoá dự án: " + error.message);
+      } else {
+        setProjects((prev) => prev.filter((p) => p.projectID != id));
+        if (openProjectId == id) setOpenProjectId(null);
+      }
+    } catch (err: any) {
+      alert("Lỗi code (Exception) khi xoá dự án: " + err.message);
+    }
+  };
+
+  const removeScheme = async (projectID: string | number, schemeNo: number) => {
+    try {
+      await supabase.from("GEAR_TRANS").delete().eq("projectID", projectID).eq("schemeNo", schemeNo);
+      await supabase.from("CHAIN_TRANS").delete().eq("projectID", projectID).eq("schemeNo", schemeNo);
+      await supabase.from("TRANSMISSION").delete().eq("projectID", projectID).eq("schemeNo", schemeNo);
+      const { error: e4 } = await supabase.from("DESIGN_SCHEME").delete().eq("projectID", projectID).eq("schemeNo", schemeNo);
+      
+      if (e4) {
+        console.error("Delete Scheme Error:", e4);
+        alert("Lỗi xoá scheme (Database): " + e4.message);
+        return;
+      }
+
+      setProjects((prev) =>
+        prev.map((p) =>
+          p.projectID == projectID ? { ...p, schemes: p.schemes.filter(s => s.schemeNo !== schemeNo) } : p
+        )
+      );
+    } catch (err: any) {
+      alert("Lỗi code (Exception) khi xoá scheme: " + err.message);
     }
   };
 
@@ -161,6 +204,7 @@ export function ModuleProjects({ onGoto, user, onSetScheme }: { onGoto?: (k: any
               motorCode: s.motorCode,
             })
           }
+          onDeleteScheme={(no) => removeScheme(p.projectID, no)}
           onRunPipeline={(s) => {
             if (onSetScheme) onSetScheme({ projectID: parseInt(p.projectID), schemeNo: s.schemeNo });
             if (onGoto) onGoto("optimizer");
@@ -226,24 +270,36 @@ export function ModuleProjects({ onGoto, user, onSetScheme }: { onGoto?: (k: any
               {projects.map((p) => (
                 <div
                   key={p.projectID}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl border border-stone-200 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-pink-50 cursor-pointer transition-colors"
-                  onClick={() => setOpenProjectId(p.projectID)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl border border-stone-200 hover:bg-stone-50 transition-colors"
                 >
                   <FolderOpen size={15} className="text-stone-500 shrink-0" />
-                  <div className="min-w-0 flex-1">
+                  <div 
+                    className="min-w-0 flex-1 cursor-pointer hover:opacity-70 transition-opacity"
+                    onClick={() => setOpenProjectId(p.projectID)}
+                    title="Mở dự án này"
+                  >
                     <div className="text-stone-800 truncate" style={{ fontSize: 14 }}>{p.projectName}</div>
                     <div className="text-stone-500 truncate" style={{ fontSize: 12 }}>{p.projectDescription}</div>
                   </div>
-                  <Badge tone="stone">{p.schemes.length} scheme</Badge>
+                  <div className="flex gap-2">
+                    <Badge tone="stone">{p.schemes.length} scheme</Badge>
+                    <Badge tone={getProjectStatus(p.schemes).tone}>{getProjectStatus(p.schemes).label}</Badge>
+                  </div>
                   <span className="text-stone-400 hidden md:inline" style={{ fontSize: 12 }}>{p.createdDate}</span>
                   <button
-                    onClick={(e) => { e.stopPropagation(); remove(p.projectID); }}
-                    className="p-1.5 rounded-md text-stone-400 hover:bg-stone-100 hover:text-stone-600"
-                    aria-label="Xoá"
+                    onClick={() => setOpenProjectId(p.projectID)}
+                    className="px-3 py-1.5 rounded-lg bg-stone-100 text-stone-600 hover:bg-stone-200 text-xs font-medium"
                   >
-                    <Trash2 size={13} />
+                    Mở
                   </button>
-                  <ChevronRight size={14} className="text-stone-400" />
+                  <button
+                    onClick={() => remove(p.projectID)}
+                    className="p-2 rounded-lg text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors"
+                    aria-label="Xoá"
+                    title="Xóa dự án"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               ))}
             </div>

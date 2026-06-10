@@ -9,7 +9,6 @@ export type ModuleKey =
   | "chain"
   | "gearbox"
   | "report"
-  | "chatbot"
   | "history";
 
 const meta: Record<ModuleKey, { label: string; icon: any }> = {
@@ -19,11 +18,11 @@ const meta: Record<ModuleKey, { label: string; icon: any }> = {
   chain:     { label: "Xích",         icon: Link2 },
   gearbox:   { label: "Bánh răng",    icon: Settings2 },
   report:    { label: "Báo cáo",      icon: FileText },
-  chatbot:   { label: "Chatbot",      icon: Bot },
+
   history:   { label: "Lịch sử",      icon: History },
 };
 
-const utility: ModuleKey[] = ["chatbot", "history"];
+const utility: ModuleKey[] = ["history"];
 
 export function Sidebar({
   active,

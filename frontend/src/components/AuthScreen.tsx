@@ -6,8 +6,8 @@ import { createClient } from "@/utils/supabase/client";
 export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: string; email: string }) => void }) {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("vkee@hcmut.edu.vn");
-  const [password, setPassword] = useState("vkee123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -197,19 +197,6 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
               {!loading && <ArrowRight size={16} />}
             </button>
 
-            <div className="flex items-center gap-3 text-stone-400">
-              <div className="flex-1 h-px bg-pink-100" />
-              <span style={{ fontSize: 12 }}>hoặc</span>
-              <div className="flex-1 h-px bg-pink-100" />
-            </div>
-
-            <button
-              type="button"
-              onClick={() => onAuth({ id: "0", name: "Khách", email: "guest@demo" })}
-              className="w-full px-5 py-3 rounded-xl bg-white border border-stone-200 text-stone-700 hover:bg-stone-50"
-            >
-              Vào nhanh chế độ demo
-            </button>
           </form>
 
           <p className="text-stone-400 mt-8 text-center" style={{ fontSize: 11, letterSpacing: '0.08em' }}>

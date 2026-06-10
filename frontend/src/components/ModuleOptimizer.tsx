@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "./Header";
 import { Card, Badge, Button, Field } from "./ui-bits";
 import { Sparkles, Brain, Cog, Link2, Play, ArrowRight, AlertCircle, Lollipop } from "lucide-react";
@@ -13,13 +13,36 @@ export function ModuleOptimizer({ onGoto, onSuccess, currentScheme }: { onGoto?:
   const { markDone, nextOf } = useWorkflow();
   const supabase = createClient();
 
-  const [P_yc, setP_yc] = useState("4.5");
-  const [n_yc, setN_yc] = useState("50");
-  const [u_total, setU_total] = useState("28.5");
-  const [L_h, setL_h] = useState("5");
+  const [P_yc, setP_yc] = useState("5.0");
+  const [n_yc, setN_yc] = useState("100");
+  const [u_total, setU_total] = useState("10");
+  const [L_h, setL_h] = useState("15000");
   const [load_type, setLoad_type] = useState("1");
 
   const [aiResult, setAiResult] = useState<any>(null);
+
+  useEffect(() => {
+    if (currentScheme) {
+      const loadData = async () => {
+        const { data } = await supabase
+          .from("DESIGN_SCHEME")
+          .select("P_dc, n_dc, u_total, L_h, load_type")
+          .eq("projectID", currentScheme.projectID)
+          .eq("schemeNo", currentScheme.schemeNo)
+          .single();
+        if (data) {
+          if (data.P_dc) setP_yc(String(data.P_dc));
+          if (data.n_dc) setN_yc(String(data.n_dc));
+          if (data.u_total) setU_total(String(data.u_total));
+          if (data.L_h) setL_h(String(data.L_h));
+          if (data.load_type) {
+             setLoad_type(data.load_type === "Tĩnh" ? "0" : data.load_type === "Va đập mạnh" ? "2" : "1");
+          }
+        }
+      };
+      loadData();
+    }
+  }, [currentScheme]);
 
   const run = async () => {
     setLoading(true);
@@ -197,7 +220,7 @@ export function ModuleOptimizer({ onGoto, onSuccess, currentScheme }: { onGoto?:
                   <SeedRow k="Mác Thép" v={aiResult.optimal_action.matID} />
                   <SeedRow k="Hệ số ψ_ba" v={aiResult.optimal_action.optimal_psi_ba.toFixed(3)} />
                   <SeedRow k="Tỉ số truyền u_d" v={aiResult.optimal_action.optimal_ud.toFixed(2)} />
-                  <SeedRow k="Số răng sơ bộ z₁" v={aiResult.optimal_action.z1_gear || "?"} />
+
                   <SeedRow k="Loại bánh răng" v={aiResult.optimal_action.gear_type} />
                 </div>
               </Card>
