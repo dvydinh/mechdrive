@@ -1,0 +1,27 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Mechanical Engineer" as eng
+
+package "AI Tools & Reporting" {
+  usecase "Extract Parameters via OCR/NER" as UC10
+  usecase "Suggest Parameters via Random Forest" as UC11
+  usecase "Optimize Design via Genetic Algorithm" as UC12
+  usecase "Generate Technical Report" as UC13
+  usecase "Export Report to PDF/DOCX" as UC14
+}
+
+actor "Supabase Storage (ML Models)" as store << System >>
+actor "Claude API (LLM)" as claude << System >>
+
+eng --> UC10
+eng --> UC11
+eng --> UC12
+eng --> UC13
+
+UC14 .> UC13 : <<extend>>
+
+UC11 --> store
+UC13 --> claude
+@enduml

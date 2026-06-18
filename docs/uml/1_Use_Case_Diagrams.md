@@ -9,106 +9,103 @@ To strictly follow UML theory:
 
 ## 1.1 User & Workspace Management Subsystem
 
-```mermaid
-flowchart LR
-    %% Primary Actors
-    Guest("🧍 Guest")
-    Engineer("🧍 Mechanical Engineer")
-    
-    %% System Boundary
-    subgraph MechDrive_User_Management [System Boundary: User & Workspace Management]
-        direction TB
-        UC1([Register Account])
-        UC2([Login])
-        UC3([Manage Workspaces])
-        UC3_1([Create Project])
-        UC3_2([Delete Project])
-        UC4([View Dashboard])
-        
-        UC3_1 .->|<<extend>>| UC3
-        UC3_2 .->|<<extend>>| UC3
-        UC3 ..->|<<include>>| UC2
-    end
-    
-    %% Secondary Actors
-    Supabase("🗄️ Supabase Auth & DB")
-    
-    %% Relationships
-    Guest --> UC1
-    Guest --> UC2
-    Engineer --> UC3
-    Engineer --> UC4
-    
-    UC1 --> Supabase
-    UC2 --> Supabase
-    UC3 --> Supabase
-    UC4 --> Supabase
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Guest" as guest
+actor "Mechanical Engineer" as eng
+
+package "User & Workspace Management" {
+  usecase "Register Account" as UC1
+  usecase "Login" as UC2
+  usecase "Manage Workspaces" as UC3
+  usecase "Create Project" as UC3_1
+  usecase "Delete Project" as UC3_2
+  usecase "View Dashboard" as UC4
+}
+
+actor "Supabase Auth & DB" as supa << System >>
+
+guest --> UC1
+guest --> UC2
+eng --> UC3
+eng --> UC4
+
+UC3_1 .> UC3 : <<extend>>
+UC3_2 .> UC3 : <<extend>>
+UC3 ..> UC2 : <<include>>
+
+UC1 --> supa
+UC2 --> supa
+UC3 --> supa
+UC4 --> supa
+@enduml
 ```
 
 ## 1.2 Mechanical Calculation Engine Subsystem (Core)
 
-```mermaid
-flowchart LR
-    %% Primary Actors
-    Engineer("🧍 Mechanical Engineer")
-    
-    %% System Boundary
-    subgraph MechDrive_Calc_Engine [System Boundary: Calculation Engine]
-        direction TB
-        UC5([Design Motor])
-        UC6([Design Chain Drive])
-        UC7([Design Gear Drive])
-        UC8([Sync Parallel Convergence])
-        UC9([Lookup Standard Data])
-        
-        UC6 ..->|<<include>>| UC8
-        UC7 ..->|<<include>>| UC8
-    end
-    
-    %% Secondary Actors
-    SupabaseDB("🗄️ Supabase (Lookup Tables)")
-    
-    %% Relationships
-    Engineer --> UC5
-    Engineer --> UC6
-    Engineer --> UC7
-    Engineer --> UC9
-    
-    UC5 --> SupabaseDB
-    UC6 --> SupabaseDB
-    UC7 --> SupabaseDB
-    UC9 --> SupabaseDB
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Mechanical Engineer" as eng
+
+package "Calculation Engine" {
+  usecase "Design Motor" as UC5
+  usecase "Design Chain Drive" as UC6
+  usecase "Design Gear Drive" as UC7
+  usecase "Sync Parallel Convergence" as UC8
+  usecase "Lookup Standard Data" as UC9
+}
+
+actor "Supabase (Lookup Tables)" as db << System >>
+
+eng --> UC5
+eng --> UC6
+eng --> UC7
+eng --> UC9
+
+UC6 ..> UC8 : <<include>>
+UC7 ..> UC8 : <<include>>
+
+UC5 --> db
+UC6 --> db
+UC7 --> db
+UC9 --> db
+@enduml
 ```
 
 ## 1.3 AI Tools & Reporting Subsystem
 
-```mermaid
-flowchart LR
-    %% Primary Actors
-    Engineer("🧍 Mechanical Engineer")
-    
-    %% System Boundary
-    subgraph MechDrive_AI_Reporting [System Boundary: AI Tools & Reporting]
-        direction TB
-        UC10([Extract Parameters via OCR/NER])
-        UC11([Suggest Parameters via Random Forest])
-        UC12([Optimize Design via Genetic Algorithm])
-        UC13([Generate Technical Report])
-        UC14([Export Report to PDF/DOCX])
-        
-        UC14 .->|<<extend>>| UC13
-    end
-    
-    %% Secondary Actors
-    SupabaseStorage("🗄️ Supabase Storage (ML Models)")
-    ClaudeAPI("🤖 Claude API (LLM)")
-    
-    %% Relationships
-    Engineer --> UC10
-    Engineer --> UC11
-    Engineer --> UC12
-    Engineer --> UC13
-    
-    UC11 --> SupabaseStorage
-    UC13 --> ClaudeAPI
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Mechanical Engineer" as eng
+
+package "AI Tools & Reporting" {
+  usecase "Extract Parameters via OCR/NER" as UC10
+  usecase "Suggest Parameters via Random Forest" as UC11
+  usecase "Optimize Design via Genetic Algorithm" as UC12
+  usecase "Generate Technical Report" as UC13
+  usecase "Export Report to PDF/DOCX" as UC14
+}
+
+actor "Supabase Storage (ML Models)" as store << System >>
+actor "Claude API (LLM)" as claude << System >>
+
+eng --> UC10
+eng --> UC11
+eng --> UC12
+eng --> UC13
+
+UC14 .> UC13 : <<extend>>
+
+UC11 --> store
+UC13 --> claude
+@enduml
 ```

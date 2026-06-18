@@ -1,0 +1,32 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Guest" as guest
+actor "Mechanical Engineer" as eng
+
+package "User & Workspace Management" {
+  usecase "Register Account" as UC1
+  usecase "Login" as UC2
+  usecase "Manage Workspaces" as UC3
+  usecase "Create Project" as UC3_1
+  usecase "Delete Project" as UC3_2
+  usecase "View Dashboard" as UC4
+}
+
+actor "Supabase Auth & DB" as supa << System >>
+
+guest --> UC1
+guest --> UC2
+eng --> UC3
+eng --> UC4
+
+UC3_1 .> UC3 : <<extend>>
+UC3_2 .> UC3 : <<extend>>
+UC3 ..> UC2 : <<include>>
+
+UC1 --> supa
+UC2 --> supa
+UC3 --> supa
+UC4 --> supa
+@enduml

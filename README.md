@@ -79,36 +79,35 @@ flowchart TB
 
 ### High-Level System Use Case
 
-```mermaid
-flowchart LR
-    %% Primary Actors
-    Guest("🧍 Guest")
-    Engineer("🧍 Mechanical Engineer")
-    
-    %% System Boundary
-    subgraph MechDrive_Studio [System Boundary: MechDrive Studio]
-        direction TB
-        UC1([Manage Account & Workspace])
-        UC2([Design Mechanical Drives])
-        UC3([Optimize via AI Models])
-        UC4([Generate Technical Reports])
-    end
-    
-    %% Secondary Actors
-    Supabase("🗄️ Supabase (BaaS)")
-    Claude("🤖 Claude API (LLM)")
-    
-    %% Relationships
-    Guest --> UC1
-    Engineer --> UC1
-    Engineer --> UC2
-    Engineer --> UC3
-    Engineer --> UC4
-    
-    UC1 --> Supabase
-    UC2 --> Supabase
-    UC3 --> Supabase
-    UC4 --> Claude
+```plantuml
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Guest" as guest
+actor "Mechanical Engineer" as eng
+
+package "MechDrive Studio" {
+  usecase "Manage Account & Workspace" as UC1
+  usecase "Design Mechanical Drives" as UC2
+  usecase "Optimize via AI Models" as UC3
+  usecase "Generate Technical Reports" as UC4
+}
+
+actor "Supabase (BaaS)" as supa << System >>
+actor "Claude API (LLM)" as claude << System >>
+
+eng -|> guest : <<inherits>>
+guest --> UC1
+eng --> UC2
+eng --> UC3
+eng --> UC4
+
+UC1 --> supa
+UC2 --> supa
+UC3 --> supa
+UC4 --> claude
+@enduml
 ```
 
 ## 5. Software engineering: Object-Oriented Design (Class Diagrams)

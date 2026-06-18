@@ -1,0 +1,29 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Mechanical Engineer" as eng
+
+package "Calculation Engine" {
+  usecase "Design Motor" as UC5
+  usecase "Design Chain Drive" as UC6
+  usecase "Design Gear Drive" as UC7
+  usecase "Sync Parallel Convergence" as UC8
+  usecase "Lookup Standard Data" as UC9
+}
+
+actor "Supabase (Lookup Tables)" as db << System >>
+
+eng --> UC5
+eng --> UC6
+eng --> UC7
+eng --> UC9
+
+UC6 ..> UC8 : <<include>>
+UC7 ..> UC8 : <<include>>
+
+UC5 --> db
+UC6 --> db
+UC7 --> db
+UC9 --> db
+@enduml
