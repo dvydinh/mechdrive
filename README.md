@@ -19,28 +19,40 @@ MechDrive Studio is a specialized web-based engineering platform dedicated to th
 
 The system is built upon a microservices-oriented architecture and a Backend-as-a-Service (BaaS) paradigm, ensuring high cohesion and low coupling.
 
+> **Note:** For a comprehensive view of the system's component and deployment architecture, please see [System Deployment & Component View](docs/uml/5_Deployment_and_Component_Diagrams.md).
+
 ```mermaid
 flowchart TB
-    subgraph Client [Client side]
-        UI[Next.js React Frontend]
+    subgraph Client [<<device>> Client Device]
+        Browser[<<execution environment>> Web Browser]
     end
-
-    subgraph BaaS [Supabase PostgreSQL]
-        Auth[Authentication]
-        DB[(Core Database)]
-        Standard[(Standard Data)]
+    
+    subgraph Vercel [<<execution environment>> Vercel Serverless]
+        UI_Comp[<<component>> Next.js React Frontend]
+        Auth_Comp[<<component>> Supabase Auth SDK]
+        
+        UI_Comp -->|<<use>>| Auth_Comp
     end
-
-    subgraph Engine [AI Microservice]
-        FastAPI[FastAPI Server]
-        QTable[Q-Table RAM Storage]
-        Formulas[Mechanical Formulas]
+    
+    subgraph Railway [<<execution environment>> Railway Container]
+        API_Comp[<<component>> FastAPI Optimization Engine]
+        QTable[<<artifact>> Q-Table Model Weights]
+        
+        API_Comp -.->|<<manifest>>| QTable
     end
-
-    UI <-->|Direct CRUD & Auth via SDK| BaaS
-    UI <-->|Optimize Request| FastAPI
-    FastAPI -->|State discretization| QTable
-    FastAPI -->|Action decoding| Formulas
+    
+    subgraph Supabase [<<device>> Supabase Managed Infrastructure]
+        DB_Comp[<<component>> PostgreSQL Database]
+        Storage[<<artifact>> Relational Data]
+        
+        DB_Comp -.->|<<manifest>>| Storage
+    end
+    
+    Browser -- "<<protocol>> HTTP/REST" --> UI_Comp
+    UI_Comp -- "<<protocol>> HTTPS/JSON" --> API_Comp
+    UI_Comp -- "<<protocol>> WebSocket/HTTPS" --> Auth_Comp
+    API_Comp -- "<<protocol>> TCP/IP" --> DB_Comp
+    Auth_Comp -- "<<protocol>> TCP/IP" --> DB_Comp
 ```
 
 ## 4. Software engineering: Requirements & Use Cases
@@ -63,27 +75,34 @@ flowchart TB
 
 ### 4.2. Use Case Diagram
 
+> **Note:** For more detailed use case definitions, refer to [Use Case Diagrams](docs/uml/1_Use_Case_Diagrams.md).
+
 ```mermaid
 flowchart LR
-    Actor((Mechanical Engineer))
+    Guest((Guest))
+    Engineer((Mechanical Engineer))
+    
+    Engineer -->|<<inherits>>| Guest
     
     subgraph MechDrive Studio
-        UC1([Register / Login])
-        UC2([Manage Projects])
-        UC3([Create Design Scheme])
-        UC4([Input Dynamic Parameters])
-        UC5([Run AI Optimizer])
-        UC6([View Technical Report])
-        UC7([Lookup Standards Catalog])
+        UC1([Register Account])
+        UC2([Login to System])
+        UC3([Manage Projects])
+        UC4([Input Parameters])
+        UC5([Optimize Design])
+        UC6([Export Report])
+        UC7([Lookup Standards])
+        
+        UC1 .->|<<extend>>| UC2
+        UC5 ..->|<<include>>| UC4
+        UC6 ..->|<<extend>>| UC5
     end
     
-    Actor --> UC1
-    Actor --> UC2
-    Actor --> UC7
-    UC2 -->|includes| UC3
-    UC3 -->|extends| UC4
-    UC4 -->|triggers| UC5
-    UC5 -->|generates| UC6
+    Guest --> UC1
+    Guest --> UC2
+    Engineer --> UC3
+    Engineer --> UC5
+    Engineer --> UC7
 ```
 
 ## 5. Software engineering: Object-Oriented Design (Class Diagrams)
@@ -92,6 +111,8 @@ The system utilizes React functional components on the frontend and Pydantic dat
 
 ### 5.1. Backend Class Diagram (FastAPI Models)
 
+> **Note:** For comprehensive details on object-oriented structures, including visibility and interface realization, refer to [Class Diagrams](docs/uml/3_Class_Diagrams.md).
+
 ```mermaid
 classDiagram
     class OptimizationRequest {
@@ -99,76 +120,107 @@ classDiagram
         +float n_yc
         +float u_total
         +float L_h
-        +string load_type
+        +String load_type
         +dict standards
     }
     
-    class GearResult {
+    class AbstractResult {
+        <<abstract>>
         +float a_w
-        +float m
         +int z1
         +int z2
+    }
+    
+    class GearResult {
+        +float m
         +float sigma_H
         +float sigma_F
-        +string material
+        +String material
     }
     
     class ChainResult {
         +float pitch
-        +int z1
-        +int z2
         +float F_t
         +float F_r
     }
     
-    class AI_Engine {
-        -dict q_table
-        +discretize_state(P, n, u, L_h) State
-        +get_best_action(State) Action
-        +calculate_physics(Action) GearResult
+    AbstractResult <|-- GearResult
+    AbstractResult <|-- ChainResult
+    
+    class State {
+        +float P_dc
+        +float n_dc
+        +float L_h
+        +float u_total
+        +discretize() int
     }
     
-    OptimizationRequest --> AI_Engine : processed by
-    AI_Engine --> GearResult : yields
-    AI_Engine --> ChainResult : yields
+    class Action {
+        +String material
+        +float psi_ba
+        +decode() dict
+    }
+    
+    class AIEngine {
+        -dict q_table
+        -float learning_rate
+        -float discount_factor
+        +discretize_state(P: float, n: float, u: float, L: float) State
+        +get_best_action(s: State) Action
+        +calculate_physics(a: Action) GearResult
+        #update_q_value(s: State, a: Action, r: float) void
+    }
+    
+    AIEngine ..> OptimizationRequest : <<use>>
+    AIEngine --> State : creates
+    AIEngine --> Action : creates
+    AIEngine ..> GearResult : <<creates>>
+    AIEngine ..> ChainResult : <<creates>>
 ```
 
 ### 5.2. Frontend Component Diagram
 
 ```mermaid
 classDiagram
-    class OldApp {
-        +User session
-        +render()
+    class App {
+        +Session userSession
+        +render() void
     }
+    
     class AuthScreen {
-        +login()
-        +register()
+        +login(credentials) void
+        +register(userData) void
     }
+    
     class ModuleProjects {
-        +fetchProjects()
-        +createProject()
-        +deleteProject()
+        -List~Project~ projects
+        +fetchProjects() void
+        +createProject(name: String) void
+        +deleteProject(id: String) void
     }
+    
     class ProjectWorkspace {
-        +Project data
-        +deleteScheme()
-        +openOptimizer()
+        -Project currentProject
+        +deleteScheme(id: String) void
+        +openOptimizer() void
     }
+    
     class ModuleOptimizer {
-        +formData
-        +runAI()
+        -OptimizationRequest formData
+        +runAI() void
+        -validateData() boolean
     }
+    
     class SchemeReport {
-        +renderTables()
-        +exportData()
+        +renderTables(result: GearResult) void
+        +exportData() PDF
     }
 
-    OldApp *-- AuthScreen
-    OldApp *-- ModuleProjects
-    ModuleProjects *-- ProjectWorkspace
-    ProjectWorkspace *-- ModuleOptimizer
-    ProjectWorkspace *-- SchemeReport
+    App *-- AuthScreen : contains
+    App *-- ModuleProjects : contains
+    ModuleProjects *-- ProjectWorkspace : manages
+    ProjectWorkspace *-- ModuleOptimizer : manages
+    ProjectWorkspace *-- SchemeReport : manages
 ```
 
 ## 6. Entity-relationship diagram (EERD)
@@ -246,43 +298,81 @@ For production, the FastAPI server freezes the Q-Table and strictly exploits the
 ## 9. Sequence diagrams
 
 ### 9.1. Main Workflow Sequence (AI Integration)
+> **Note:** For a complete suite of sequence diagrams covering all use cases, see [Sequence Diagrams](docs/uml/4_Sequence_Diagrams.md). Also, see [Activity Diagrams](docs/uml/2_Activity_Diagrams.md) for the equivalent workflow logic.
+
 ```mermaid
 sequenceDiagram
-    actor User
-    participant Frontend as Next.js UI
-    participant Supabase as Supabase (BaaS)
-    participant FastAPI as AI Engine
+    actor Eng as :MechanicalEngineer
+    participant UI as ui:ModuleOptimizer
+    participant API as api:AIEngine
+    participant DB as db:SupabaseDB
 
-    User->>Frontend: Enter P_yc, n_yc, L_h, u_total, load_type
-    Frontend->>FastAPI: POST /ai/optimize-design (JSON payload)
-    activate FastAPI
-    FastAPI->>FastAPI: Map continuous inputs to discrete State Key
-    FastAPI->>FastAPI: Lookup optimal Action (Material, psi_ba) in Q-Table
-    FastAPI->>FastAPI: Calculate dimensions (a_w, m, z1, z2) & stresses (sigma_H, sigma_F)
-    FastAPI-->>Frontend: Return recommended parameters & formulas JSON
-    deactivate FastAPI
-    Frontend->>User: Render technical reports & parameter preview
-    User->>Frontend: Review and Confirm Scheme
-    Frontend->>Supabase: Execute Direct INSERT into DESIGN_SCHEME, GEAR_TRANS, CHAIN_TRANS
-    Supabase-->>Frontend: Return 201 Created confirmation
+    Eng->>UI: clickOptimizeBtn(formData)
+    activate UI
+    UI->>UI: validateData(formData)
+    
+    alt [not isValid]
+        UI-->>Eng: renderValidationError()
+    else [isValid]
+        UI->>API: processOptimization(request)
+        activate API
+        API->>API: discretize_state(P_yc, n_yc)
+        
+        loop [until valid action found]
+            API->>API: get_best_action(state)
+            API->>API: calculate_physics(action)
+        end
+        
+        API-->>UI: return DesignResult
+        deactivate API
+        
+        UI->>UI: updateUIState(DesignResult)
+        UI-->>Eng: displayReportTables()
+        
+        opt [user clicks save]
+            Eng->>UI: clickSaveProject()
+            UI->>DB: insert("DESIGN_SCHEME", schemaData)
+            activate DB
+            DB-->>UI: 201 Created
+            deactivate DB
+            UI-->>Eng: renderSuccessToast()
+        end
+    end
+    deactivate UI
 ```
 
 ### 9.2. Project Management Sequence
 ```mermaid
 sequenceDiagram
-    actor User
-    participant UI as Frontend ModuleProjects
-    participant DB as Supabase DB
+    actor Eng as :MechanicalEngineer
+    participant UI as ui:ModuleProjects
+    participant DB as db:SupabaseDB
 
-    User->>UI: Click "Delete Project"
+    Eng->>UI: clickDeleteIcon(projectID)
     activate UI
-    UI->>DB: DELETE FROM GEAR_TRANS WHERE projectID
-    UI->>DB: DELETE FROM CHAIN_TRANS WHERE projectID
-    UI->>DB: DELETE FROM DESIGN_SCHEME WHERE projectID
-    UI->>DB: DELETE FROM PROJECT WHERE projectID
-    DB-->>UI: Acknowledge Deletion
-    UI->>UI: Update React State (remove from list)
-    UI-->>User: Visual confirmation (Project disappears)
+    
+    UI->>DB: delete("GEAR_TRANS", projectID)
+    activate DB
+    DB-->>UI: return status 200
+    deactivate DB
+    
+    UI->>DB: delete("CHAIN_TRANS", projectID)
+    activate DB
+    DB-->>UI: return status 200
+    deactivate DB
+    
+    UI->>DB: delete("DESIGN_SCHEME", projectID)
+    activate DB
+    DB-->>UI: return status 200
+    deactivate DB
+    
+    UI->>DB: delete("PROJECT", projectID)
+    activate DB
+    DB-->>UI: return success
+    deactivate DB
+    
+    UI->>UI: removeProjectFromState(projectID)
+    UI-->>Eng: hideProjectFromView()
     deactivate UI
 ```
 
