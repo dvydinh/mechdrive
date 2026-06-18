@@ -75,34 +75,40 @@ flowchart TB
 
 ### 4.2. Use Case Diagram
 
-> **Note:** For more detailed use case definitions, refer to [Use Case Diagrams](docs/uml/1_Use_Case_Diagrams.md).
+> **Note:** The Use Cases have been meticulously detailed and split into 3 core subsystems matching the technical specification. For the comprehensive diagrams covering all detailed use cases, please refer to [Detailed Use Case Diagrams](docs/uml/1_Use_Case_Diagrams.md).
+
+### High-Level System Use Case
 
 ```mermaid
 flowchart LR
-    Guest((Guest))
-    Engineer((Mechanical Engineer))
+    %% Primary Actors
+    Guest("🧍 Guest")
+    Engineer("🧍 Mechanical Engineer")
     
-    Engineer -->|<<inherits>>| Guest
-    
-    subgraph MechDrive Studio
-        UC1([Register Account])
-        UC2([Login to System])
-        UC3([Manage Projects])
-        UC4([Input Parameters])
-        UC5([Optimize Design])
-        UC6([Export Report])
-        UC7([Lookup Standards])
-        
-        UC1 .->|<<extend>>| UC2
-        UC5 ..->|<<include>>| UC4
-        UC6 ..->|<<extend>>| UC5
+    %% System Boundary
+    subgraph MechDrive_Studio [System Boundary: MechDrive Studio]
+        direction TB
+        UC1([Manage Account & Workspace])
+        UC2([Design Mechanical Drives])
+        UC3([Optimize via AI Models])
+        UC4([Generate Technical Reports])
     end
     
+    %% Secondary Actors
+    Supabase("🗄️ Supabase (BaaS)")
+    Claude("🤖 Claude API (LLM)")
+    
+    %% Relationships
     Guest --> UC1
-    Guest --> UC2
+    Engineer --> UC1
+    Engineer --> UC2
     Engineer --> UC3
-    Engineer --> UC5
-    Engineer --> UC7
+    Engineer --> UC4
+    
+    UC1 --> Supabase
+    UC2 --> Supabase
+    UC3 --> Supabase
+    UC4 --> Claude
 ```
 
 ## 5. Software engineering: Object-Oriented Design (Class Diagrams)
