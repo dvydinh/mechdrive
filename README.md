@@ -79,36 +79,7 @@ flowchart TB
 
 ### High-Level System Use Case
 
-```plantuml
-@startuml
-left to right direction
-skinparam packageStyle rectangle
-
-actor "Guest" as guest
-actor "Mechanical Engineer" as eng
-
-package "MechDrive Studio" {
-  usecase "Manage Account & Workspace" as UC1
-  usecase "Design Mechanical Drives" as UC2
-  usecase "Optimize via AI Models" as UC3
-  usecase "Generate Technical Reports" as UC4
-}
-
-actor "Supabase (BaaS)" as supa << System >>
-actor "Claude API (LLM)" as claude << System >>
-
-eng -|> guest : <<inherits>>
-guest --> UC1
-eng --> UC2
-eng --> UC3
-eng --> UC4
-
-UC1 --> supa
-UC2 --> supa
-UC3 --> supa
-UC4 --> claude
-@enduml
-```
+![High-Level System Use Case](docs/uml/uc_high_level.svg)
 
 ## 5. Software engineering: Object-Oriented Design (Class Diagrams)
 
