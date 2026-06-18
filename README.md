@@ -226,7 +226,8 @@ classDiagram
 ## 6. Entity-relationship diagram (EERD)
 
 <!-- INSERT YOUR EERD IMAGE HERE -->
-![Entity-Relationship Diagram](replace_with_your_image_link_or_path.png)
+<img width="1307" height="1328" alt="Copy of EERD drawio (1)" src="https://github.com/user-attachments/assets/3ae4a8f1-fccd-4cc8-b71f-363eab22b1be" />
+
 <!-- ============================== -->
 
 *Note: `STD_MOTOR`, `STD_CHAIN`, and `STD_MATERIAL` act as read-only lookup tables for the frontend and are not strictly bound by dynamic foreign keys to preserve historical design states.*
