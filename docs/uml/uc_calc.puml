@@ -1,29 +1,55 @@
 @startuml
 left to right direction
 skinparam packageStyle rectangle
+skinparam nodesep 30
+skinparam ranksep 100
+skinparam wrapWidth 200
 
 actor "Mechanical Engineer" as eng
-
-package "Calculation Engine" {
-  usecase "Design Motor" as UC5
-  usecase "Design Chain Drive" as UC6
-  usecase "Design Gear Drive" as UC7
-  usecase "Sync Parallel Convergence" as UC8
-  usecase "Lookup Standard Data" as UC9
-}
-
 actor "Supabase (Lookup Tables)" as db << System >>
 
+package "Calculation Engine" {
+  usecase "Design Motor" as UC1
+  usecase "Calculate Power & Speed" as UC1_1
+  usecase "Select Motor" as UC1_2
+  
+  usecase "Design Chain Drive" as UC2
+  usecase "Calculate Sprocket Teeth" as UC2_1
+  usecase "Check Chain Stress" as UC2_2
+  
+  usecase "Design Gear Drive" as UC3
+  usecase "Design Bevel Gear" as UC3_1
+  usecase "Design Helical Gear" as UC3_2
+  usecase "Check Gear Stress" as UC3_3
+  
+  usecase "Sync Parallel Convergence" as UC4
+  usecase "Detect Infinite Loop" as UC4_1
+  
+  usecase "Lookup Standard Data" as UC5
+}
+
+eng --> UC1
+UC1 ..down..> UC1_1 : <<include>>
+UC1_2 ..up..> UC1 : <<extend>>
+
+eng --> UC2
+UC2 ..down..> UC2_1 : <<include>>
+UC2 ..down..> UC2_2 : <<include>>
+
+eng --> UC3
+UC3_1 ..up..> UC3 : <<extend>>
+UC3_2 ..up..> UC3 : <<extend>>
+UC3 ..down..> UC3_3 : <<include>>
+
+UC2 ..down..> UC4 : <<include>>
+UC3 ..down..> UC4 : <<include>>
+UC4_1 ..up..> UC4 : <<extend>>
+
 eng --> UC5
-eng --> UC6
-eng --> UC7
-eng --> UC9
 
-UC6 ..> UC8 : <<include>>
-UC7 ..> UC8 : <<include>>
-
+UC1_2 --> db
+UC2 --> db
+UC3 --> db
 UC5 --> db
-UC6 --> db
-UC7 --> db
-UC9 --> db
+
 @enduml

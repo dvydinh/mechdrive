@@ -1,32 +1,44 @@
 @startuml
 left to right direction
 skinparam packageStyle rectangle
+skinparam nodesep 30
+skinparam ranksep 100
+skinparam wrapWidth 200
 
 actor "Guest" as guest
 actor "Mechanical Engineer" as eng
+actor "Supabase Auth & DB" as supa << System >>
 
 package "User & Workspace Management" {
   usecase "Register Account" as UC1
+  usecase "Verify Email" as UC1_1
   usecase "Login" as UC2
+  usecase "Authenticate Credentials" as UC2_1
+  usecase "Reset Password" as UC2_2
   usecase "Manage Workspaces" as UC3
-  usecase "Create Project" as UC3_1
+  usecase "Create New Project" as UC3_1
   usecase "Delete Project" as UC3_2
   usecase "View Dashboard" as UC4
+  usecase "View Calculation Progress" as UC4_1
 }
 
-actor "Supabase Auth & DB" as supa << System >>
-
 guest --> UC1
+UC1 ..down..> UC1_1 : <<include>>
+UC1_1 --> supa
+
 guest --> UC2
+UC2 ..down..> UC2_1 : <<include>>
+UC2_2 ..up..> UC2 : <<extend>>
+UC2_1 --> supa
+UC2_2 --> supa
+
 eng --> UC3
-eng --> UC4
-
-UC3_1 .> UC3 : <<extend>>
-UC3_2 .> UC3 : <<extend>>
-UC3 ..> UC2 : <<include>>
-
-UC1 --> supa
-UC2 --> supa
+UC3_1 ..up..> UC3 : <<extend>>
+UC3_2 ..up..> UC3 : <<extend>>
 UC3 --> supa
+
+eng --> UC4
+UC4_1 ..up..> UC4 : <<extend>>
 UC4 --> supa
+
 @enduml
