@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, Lock, User, ArrowRight, AlertCircle, KeyRound } from "lucide-react";
 import { GearLogo } from "./GearLogo";
 import { createClient } from "@/utils/supabase/client";
@@ -8,6 +8,10 @@ export function AuthScreen({ onAuth, initialMode }: { onAuth: (user: { id: strin
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (initialMode) setMode(initialMode);
+  }, [initialMode]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
