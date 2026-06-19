@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { Mail, Lock, User, ArrowRight, AlertCircle } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, AlertCircle, KeyRound } from "lucide-react";
 import { GearLogo } from "./GearLogo";
 import { createClient } from "@/utils/supabase/client";
 
 export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: string; email: string }) => void }) {
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [mode, setMode] = useState<"login" | "register" | "reset">("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
 
   const supabase = createClient();
 
@@ -17,36 +18,62 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
     e.preventDefault();
     setLoading(true);
     setError("");
+    setInfo("");
 
     try {
       if (mode === "register") {
-        const { data: existing } = await supabase.from("USER_ACCOUNT").select("userID").eq("email", email).single();
-        if (existing) {
-          throw new Error("Email này đã được sử dụng. Vui lòng đăng nhập.");
-        }
-
-        const { error: signUpError } = await supabase.from("USER_ACCOUNT").insert({
-          userName: name || "Sinh viên",
-          email: email,
-          password: password,
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { userName: name || "Sinh viên" },
+          },
         });
 
         if (signUpError) throw signUpError;
-        alert("Đăng ký thành công! Bạn có thể đăng nhập ngay.");
-        setMode("login");
-      } else {
-        const { data: userRow, error: signInError } = await supabase
-          .from("USER_ACCOUNT")
-          .select("*")
-          .eq("email", email)
-          .eq("password", password)
-          .single();
 
-        if (signInError || !userRow) {
-          throw new Error("Email hoặc mật khẩu không đúng.");
+        if (data.user && data.user.identities && data.user.identities.length === 0) {
+          throw new Error("Email này đã được sử dụng.");
         }
 
-        onAuth({ id: userRow.userID.toString(), name: userRow.userName, email: userRow.email });
+        // Sync to USER_ACCOUNT table
+        if (data.user) {
+          await supabase.from("USER_ACCOUNT").upsert({
+            userID: data.user.id,
+            userName: name || "Sinh viên",
+            email: email,
+            password: "managed_by_supabase_auth",
+          }, { onConflict: "email" });
+        }
+
+        setInfo("Đăng ký thành công! Kiểm tra email để xác nhận tài khoản.");
+        setMode("login");
+
+      } else if (mode === "login") {
+        const { data, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (signInError) throw signInError;
+
+        if (data.user) {
+          onAuth({
+            id: data.user.id,
+            name: data.user.user_metadata?.userName || email.split("@")[0],
+            email: data.user.email || email,
+          });
+        }
+
+      } else if (mode === "reset") {
+        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/`,
+        });
+
+        if (resetError) throw resetError;
+
+        setInfo("Link đặt lại mật khẩu đã gửi về email của bạn.");
+        setMode("login");
       }
     } catch (err: any) {
       setError(err.message || "Đã có lỗi xảy ra");
@@ -111,7 +138,7 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
             {(["login", "register"] as const).map((m) => (
               <button
                 key={m}
-                onClick={() => setMode(m)}
+                onClick={() => { setMode(m); setError(""); setInfo(""); }}
                 className={`px-4 py-1.5 rounded-lg transition ${mode === m ? "bg-gradient-to-r from-yellow-200 to-pink-200 text-stone-800" : "text-stone-500 hover:text-stone-700"
                   }`}
               >
@@ -121,12 +148,14 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
           </div>
 
           <h2 className="font-serif text-stone-900" style={{ fontSize: 24 }}>
-            {mode === "login" ? "Chào mừng trở lại" : "Tạo tài khoản mới"}
+            {mode === "login" ? "Chào mừng trở lại" : mode === "register" ? "Tạo tài khoản mới" : "Đặt lại mật khẩu"}
           </h2>
           <p className="text-stone-500 mt-2" style={{ fontSize: 13 }}>
             {mode === "login"
               ? "Đăng nhập để tiếp tục"
-              : ""}
+              : mode === "register"
+              ? "Bạn sẽ nhận email xác nhận sau khi đăng ký"
+              : "Nhập email để nhận link đặt lại mật khẩu"}
           </p>
 
           <form onSubmit={submit} className="mt-6 space-y-4">
@@ -158,25 +187,40 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
               </div>
             </div>
 
-            <div>
-              <label className="text-stone-700 block mb-1.5">Mật khẩu</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={16} />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-3 py-3 rounded-xl bg-white border border-pink-100 focus:border-pink-300 focus:ring-2 focus:ring-pink-100 outline-none"
-                />
+            {mode !== "reset" && (
+              <div>
+                <label className="text-stone-700 block mb-1.5">Mật khẩu</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={16} />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-10 pr-3 py-3 rounded-xl bg-white border border-pink-100 focus:border-pink-300 focus:ring-2 focus:ring-pink-100 outline-none"
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {mode === "login" && (
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-2 text-stone-600">
                   <input type="checkbox" className="accent-stone-600" defaultChecked /> Ghi nhớ
                 </label>
-                <button type="button" className="text-stone-700 hover:underline">Quên mật khẩu?</button>
+                <button type="button" onClick={() => { setMode("reset"); setError(""); setInfo(""); }} className="text-stone-700 hover:underline">Quên mật khẩu?</button>
+              </div>
+            )}
+
+            {mode === "reset" && (
+              <button type="button" onClick={() => { setMode("login"); setError(""); setInfo(""); }} className="text-stone-600 hover:underline text-sm">
+                ← Quay lại đăng nhập
+              </button>
+            )}
+
+            {info && (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-green-50 text-green-700 text-sm">
+                <KeyRound size={16} />
+                <span>{info}</span>
               </div>
             )}
 
@@ -193,7 +237,7 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
               className={`w-full px-5 py-3 rounded-xl bg-gradient-to-r from-yellow-200 to-pink-300 text-stone-800 shadow-md flex items-center justify-center gap-2 transition ${loading ? "opacity-70 cursor-not-allowed" : "hover:shadow-lg"
                 }`}
             >
-              {loading ? "Đang xử lý..." : mode === "login" ? "Đăng nhập" : "Tạo tài khoản"}
+              {loading ? "Đang xử lý..." : mode === "login" ? "Đăng nhập" : mode === "register" ? "Tạo tài khoản" : "Gửi link đặt lại"}
               {!loading && <ArrowRight size={16} />}
             </button>
 

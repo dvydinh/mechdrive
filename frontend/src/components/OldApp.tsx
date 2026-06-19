@@ -21,9 +21,21 @@ export default function App() {
   const supabase = createClient();
 
   useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.userName || session.user.email?.split("@")[0] || "User",
+          email: session.user.email || "",
+        });
+      }
+    };
+    checkSession();
   }, []);
 
   const handleLogout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
   };
 

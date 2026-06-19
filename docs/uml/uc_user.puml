@@ -8,16 +8,16 @@ actor "Supabase System" as supa << System >>
 package "User & Workspace Management" {
   usecase "Register Account" as UC1
   usecase "Input Credentials" as UC1_1
-  usecase "Validate Input Format" as UC1_2
-  usecase "Send Verification Email" as UC1_3
+  usecase "Confirm Email" as UC1_3
   
   usecase "Login" as UC2
   usecase "Authenticate via Supabase Auth" as UC2_1
   usecase "Handle Invalid Credentials" as UC2_2
   
   usecase "Reset Password" as UC3
-  usecase "Send Reset Link" as UC3_1
-  usecase "Update New Password" as UC3_2
+  usecase "Send Reset Link via Email" as UC3_1
+  
+  usecase "Logout" as UC6
   
   usecase "Manage Projects" as UC4
   usecase "Create Project" as UC4_1
@@ -27,11 +27,11 @@ package "User & Workspace Management" {
 
 UC1 -[hidden]down-> UC2
 UC2 -[hidden]down-> UC3
-UC3 -[hidden]down-> UC4
+UC3 -[hidden]down-> UC6
+UC6 -[hidden]down-> UC4
 
 guest -right-> UC1
 UC1 .down.> UC1_1 : <<include>>
-UC1 .down.> UC1_2 : <<include>>
 UC1 <.down. UC1_3 : <<extend>>
 
 guest -right-> UC2
@@ -41,7 +41,8 @@ UC2 <.down. UC2_2 : <<extend>>
 
 guest -right-> UC3
 UC3 .down.> UC3_1 : <<include>>
-UC3 .down.> UC3_2 : <<include>>
+
+eng -right-> UC6
 
 eng -right-> UC4
 UC4 <.down. UC4_1 : <<extend>>

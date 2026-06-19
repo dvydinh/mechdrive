@@ -55,54 +55,82 @@ sequenceDiagram
 sequenceDiagram
     actor Guest as :Guest
     participant UI as ui:AuthScreen
-    participant API as api:FastAPIEngine
+    participant Auth as auth:SupabaseAuth
     participant DB as db:Supabase
 
     Guest->>UI: inputCredentials(email, password, userName)
     activate UI
     
-    UI->>API: POST /users/register(userData)
-    activate API
+    UI->>Auth: signUp(email, password, metadata)
+    activate Auth
+    Auth-->>UI: User object
+    deactivate Auth
     
-    API->>DB: auth.sign_up(email, password)
+    UI->>DB: upsert("USER_ACCOUNT", userData)
     activate DB
-    DB-->>API: User object
+    DB-->>UI: OK
     deactivate DB
     
-    API->>DB: insert("USER", userData)
-    activate DB
-    DB-->>API: UserRecord
-    deactivate DB
-    
-    API-->>UI: UserResponse
-    deactivate API
-    
-    UI-->>Guest: Registration Success
+    UI-->>Guest: Success + Check Email for Confirmation
     deactivate UI
 ```
 
-## 4.3 Project Deletion Sequence
+## 4.3 Reset Password Sequence
+
+```mermaid
+sequenceDiagram
+    actor Guest as :Guest
+    participant UI as ui:AuthScreen
+    participant Auth as auth:SupabaseAuth
+
+    Guest->>UI: clickForgotPassword()
+    activate UI
+    
+    Guest->>UI: inputEmail(email)
+    UI->>Auth: resetPasswordForEmail(email)
+    activate Auth
+    Auth-->>UI: OK
+    deactivate Auth
+    
+    UI-->>Guest: Check Email for Reset Link
+    deactivate UI
+```
+
+## 4.4 Project Deletion Sequence
 
 ```mermaid
 sequenceDiagram
     actor Eng as :MechanicalEngineer
     participant UI as ui:ModuleProjects
-    participant API as api:FastAPIEngine
     participant DB as db:Supabase
 
     Eng->>UI: clickDeleteIcon(projectID)
     activate UI
     
-    UI->>API: DELETE /projects/{project_id}
-    activate API
-    
-    API->>DB: delete("PROJECT", projectID)
+    UI->>DB: delete("GEAR_TRANS", projectID)
     activate DB
-    DB-->>API: success
+    DB-->>UI: OK
     deactivate DB
     
-    API-->>UI: Status 200
-    deactivate API
+    UI->>DB: delete("CHAIN_TRANS", projectID)
+    activate DB
+    DB-->>UI: OK
+    deactivate DB
+    
+    UI->>DB: delete("TRANSMISSION", projectID)
+    activate DB
+    DB-->>UI: OK
+    deactivate DB
+    
+    UI->>DB: delete("DESIGN_SCHEME", projectID)
+    activate DB
+    DB-->>UI: OK
+    deactivate DB
+    
+    UI->>DB: delete("PROJECT", projectID)
+    activate DB
+    DB-->>UI: OK
+    deactivate DB
     
     UI->>UI: removeProjectFromState(projectID)
     UI-->>Eng: Updated Dashboard View
