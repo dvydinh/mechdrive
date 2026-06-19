@@ -5,7 +5,6 @@ skinparam packageStyle rectangle
 actor "Guest" as guest
 actor "Mechanical Engineer" as eng
 actor "Supabase System" as supa << System >>
-actor "Claude AI API" as claude << System >>
 
 package "MechDrive Studio" {
   usecase "Manage Account & Workspace" as UC1
@@ -22,6 +21,5 @@ eng --> UC3
 UC1 <-- supa
 UC2 <-- supa
 UC3 <-- supa
-UC3 <-- claude
 
 @enduml

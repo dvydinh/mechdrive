@@ -51,7 +51,7 @@ The system is built upon a microservices-oriented architecture and a Backend-as-
 
 ### High-level system use case
 
-*The high-level use case diagram below illustrates the complete MechDrive Studio system boundary, showcasing how the Mechanical Engineer interacts with the main modules (Calculation, AI, Reporting) and how the system delegates data/AI processing to secondary actors (Supabase, Claude).*
+*The high-level use case diagram below illustrates the complete MechDrive Studio system boundary, showcasing how the Mechanical Engineer interacts with the main modules (Calculation, AI, Reporting) and how the system delegates data/AI processing to secondary actors (Supabase).*
 
 <div align="center">
   <img src="docs/uml/uc_high_level.svg" alt="High-Level System Use Case">
