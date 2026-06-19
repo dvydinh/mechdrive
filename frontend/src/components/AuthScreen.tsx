@@ -58,11 +58,21 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
 
         if (data.user) {
           // lookup integer userID from USER_ACCOUNT
-          const { data: row } = await supabase
+          let { data: row } = await supabase
             .from("USER_ACCOUNT")
             .select("userID, userName")
             .eq("email", data.user.email)
             .single();
+
+          if (!row) {
+            // fallback for users created before the fix
+            const { data: newRow } = await supabase.from("USER_ACCOUNT").insert({
+              userName: data.user.user_metadata?.userName || email.split("@")[0],
+              email: data.user.email || email,
+              password: "managed_by_supabase_auth",
+            }).select("userID, userName").single();
+            row = newRow;
+          }
 
           onAuth({
             id: row?.userID?.toString() || data.user.id,
