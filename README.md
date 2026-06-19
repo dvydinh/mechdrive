@@ -27,9 +27,9 @@ The system is built upon a microservices-oriented architecture and a Backend-as-
   <em>Figure 3.1: System Deployment and Component Architecture</em>
 </div>
 
-## 4. Software engineering: Requirements & Use Cases
+## 4. Software engineering: requirements & use cases
 
-### 4.1. User Stories & Scenarios
+### 4.1. User stories & scenarios
 
 **US1: Authentication & Workspace Management**
 - *Story*: As a mechanical engineer, I want to create an account and manage multiple independent design projects so that my work is securely stored and organized.
@@ -45,11 +45,11 @@ The system is built upon a microservices-oriented architecture and a Backend-as-
 - *Story*: As a student, I want to export or view a highly detailed step-by-step mechanical calculation report to verify the results against my textbook formulas.
 - *Scenario*: Upon successful AI optimization, the user clicks "View Report". The system renders a technical specification sheet detailing $\sigma_H, \sigma_F, a_w, m$, and tension forces.
 
-### 4.2. Use Case Diagram
+### 4.2. Use case diagram
 
 > **Note:** The Use Cases have been meticulously detailed and split into 3 core subsystems matching the technical specification. For the comprehensive diagrams covering all detailed use cases, please refer to [Detailed Use Case Diagrams](docs/uml/1_Use_Case_Diagrams.md).
 
-### High-Level System Use Case
+### High-level system use case
 
 *The high-level use case diagram below illustrates the complete MechDrive Studio system boundary, showcasing how the Mechanical Engineer interacts with the main modules (Calculation, AI, Reporting) and how the system delegates data/AI processing to secondary actors (Supabase, Claude).*
 
@@ -59,11 +59,11 @@ The system is built upon a microservices-oriented architecture and a Backend-as-
   <em>Figure 4.2: High-Level Use Case Diagram for MechDrive Studio</em>
 </div>
 
-## 5. Software engineering: Object-Oriented Design (Class Diagrams)
+## 5. Software engineering: object-oriented design (class diagrams)
 
 The system utilizes React functional components on the frontend and Pydantic data models on the backend.
 
-### 5.1. Backend Class Diagram (FastAPI Models)
+### 5.1. Backend class diagram (FastAPI models)
 
 > **Note:** For comprehensive details on object-oriented structures, including visibility and interface realization, refer to [Class Diagrams](docs/uml/3_Class_Diagrams.md).
 
@@ -132,7 +132,7 @@ classDiagram
     AIEngine ..> ChainResult : <<creates>>
 ```
 
-### 5.2. Frontend Component Diagram
+### 5.2. Frontend component diagram
 
 ```mermaid
 classDiagram
@@ -252,7 +252,7 @@ For production, the FastAPI server freezes the Q-Table and strictly exploits the
 
 ## 9. Sequence diagrams
 
-### 9.1. Main Workflow Sequence (AI Integration)
+### 9.1. Main workflow sequence (AI integration)
 > **Note:** For a complete suite of sequence diagrams covering all use cases, see [Sequence Diagrams](docs/uml/4_Sequence_Diagrams.md). Also, see [Activity Diagrams](docs/uml/2_Activity_Diagrams.md) for the equivalent workflow logic.
 
 ```mermaid
@@ -296,7 +296,7 @@ sequenceDiagram
     deactivate UI
 ```
 
-### 9.2. Project Management Sequence
+### 9.2. Project management sequence
 ```mermaid
 sequenceDiagram
     actor Eng as :MechanicalEngineer
