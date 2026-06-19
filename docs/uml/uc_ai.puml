@@ -2,12 +2,11 @@
 skinparam packageStyle rectangle
 
 actor "Mechanical Engineer" as eng
-actor "Supabase System" as store << System >>
 
 package "AI Optimizer" {
   usecase "Optimize via Q-Learning" as UC1
   usecase "Discretize Input State" as UC1_1
-  usecase "Lookup Q-Table" as UC1_2
+  usecase "Lookup Q-Table (local JSON)" as UC1_2
   usecase "Recommend Material & Gear Type" as UC1_3
   usecase "Predict z1, psi_ba, u_d" as UC1_4
 }
@@ -17,7 +16,5 @@ UC1 .down.> UC1_1 : <<include>>
 UC1 .down.> UC1_2 : <<include>>
 UC1 .down.> UC1_3 : <<include>>
 UC1 .down.> UC1_4 : <<include>>
-
-store -left-> UC1_2
 
 @enduml
