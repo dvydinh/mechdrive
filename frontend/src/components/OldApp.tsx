@@ -20,8 +20,23 @@ export default function App() {
   const [aiResult, setAiResult] = useState<any>(null);
   const supabase = createClient();
 
+  const [isRecovering, setIsRecovering] = useState(false);
+
   useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+          setIsRecovering(true);
+        }
+      }
+    );
+
     const checkSession = async () => {
+      // Check hash for recovery token (some browsers handle it before onAuthStateChange)
+      if (window.location.hash.includes('type=recovery')) {
+        setIsRecovering(true);
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         let { data: row } = await supabase
@@ -47,6 +62,8 @@ export default function App() {
       }
     };
     checkSession();
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleLogout = async () => {
@@ -54,6 +71,7 @@ export default function App() {
     setUser(null);
   };
 
+  if (isRecovering) return <AuthScreen onAuth={() => setIsRecovering(false)} initialMode="update_password" />;
   if (!user) return <AuthScreen onAuth={setUser} />;
 
   return (

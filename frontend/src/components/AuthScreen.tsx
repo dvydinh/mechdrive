@@ -3,8 +3,8 @@ import { Mail, Lock, User, ArrowRight, AlertCircle, KeyRound } from "lucide-reac
 import { GearLogo } from "./GearLogo";
 import { createClient } from "@/utils/supabase/client";
 
-export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: string; email: string }) => void }) {
-  const [mode, setMode] = useState<"login" | "register" | "reset">("login");
+export function AuthScreen({ onAuth, initialMode }: { onAuth: (user: { id: string; name: string; email: string }) => void, initialMode?: "login" | "register" | "reset" | "update_password" }) {
+  const [mode, setMode] = useState<"login" | "register" | "reset" | "update_password">(initialMode || "login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -90,6 +90,13 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
 
         setInfo("Link đặt lại mật khẩu đã gửi về email của bạn.");
         setMode("login");
+      } else if (mode === "update_password") {
+        const { error: updateError } = await supabase.auth.updateUser({ password });
+        if (updateError) throw updateError;
+        
+        alert("Cập nhật mật khẩu thành công!");
+        window.location.hash = ""; // Clear recovery hash
+        window.location.reload(); // Reload to start fresh logged in
       }
     } catch (err: any) {
       setError(err.message || "Đã có lỗi xảy ra");
@@ -151,26 +158,32 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
           </div>
 
           <div className="inline-flex rounded-xl bg-white/70 backdrop-blur border border-pink-100 p-1 mb-6">
-            {(["login", "register"] as const).map((m) => (
-              <button
-                key={m}
-                onClick={() => { setMode(m); setError(""); setInfo(""); }}
-                className={`px-4 py-1.5 rounded-lg transition ${mode === m ? "bg-gradient-to-r from-yellow-200 to-pink-200 text-stone-800" : "text-stone-500 hover:text-stone-700"
-                  }`}
-              >
-                {m === "login" ? "Đăng nhập" : "Đăng ký"}
-              </button>
-            ))}
+            {mode !== "update_password" ? (
+              (["login", "register"] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => { setMode(m); setError(""); setInfo(""); }}
+                  className={`px-4 py-1.5 rounded-lg transition ${mode === m ? "bg-gradient-to-r from-yellow-200 to-pink-200 text-stone-800" : "text-stone-500 hover:text-stone-700"
+                    }`}
+                >
+                  {m === "login" ? "Đăng nhập" : "Đăng ký"}
+                </button>
+              ))
+            ) : (
+              <span className="px-4 py-1.5 text-stone-800 font-medium">Khôi phục mật khẩu</span>
+            )}
           </div>
 
           <h2 className="font-serif text-stone-900" style={{ fontSize: 24 }}>
-            {mode === "login" ? "Chào mừng trở lại" : mode === "register" ? "Tạo tài khoản mới" : "Đặt lại mật khẩu"}
+            {mode === "login" ? "Chào mừng trở lại" : mode === "register" ? "Tạo tài khoản mới" : mode === "update_password" ? "Cập nhật mật khẩu" : "Đặt lại mật khẩu"}
           </h2>
           <p className="text-stone-500 mt-2" style={{ fontSize: 13 }}>
             {mode === "login"
               ? "Đăng nhập để tiếp tục"
               : mode === "register"
               ? "Bạn sẽ nhận email xác nhận sau khi đăng ký"
+              : mode === "update_password"
+              ? "Nhập mật khẩu mới cho tài khoản của bạn"
               : "Nhập email để nhận link đặt lại mật khẩu"}
           </p>
 
@@ -190,18 +203,20 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
               </div>
             )}
 
-            <div>
-              <label className="text-stone-700 block mb-1.5">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={16} />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-3 py-3 rounded-xl bg-white border border-pink-100 focus:border-pink-300 focus:ring-2 focus:ring-pink-100 outline-none"
-                />
+            {mode !== "update_password" && (
+              <div>
+                <label className="text-stone-700 block mb-1.5">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={16} />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-10 pr-3 py-3 rounded-xl bg-white border border-pink-100 focus:border-pink-300 focus:ring-2 focus:ring-pink-100 outline-none"
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             {mode !== "reset" && (
               <div>
@@ -253,7 +268,7 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
               className={`w-full px-5 py-3 rounded-xl bg-gradient-to-r from-yellow-200 to-pink-300 text-stone-800 shadow-md flex items-center justify-center gap-2 transition ${loading ? "opacity-70 cursor-not-allowed" : "hover:shadow-lg"
                 }`}
             >
-              {loading ? "Đang xử lý..." : mode === "login" ? "Đăng nhập" : mode === "register" ? "Tạo tài khoản" : "Gửi link đặt lại"}
+              {loading ? "Đang xử lý..." : mode === "login" ? "Đăng nhập" : mode === "register" ? "Tạo tài khoản" : mode === "update_password" ? "Lưu mật khẩu mới" : "Gửi link đặt lại"}
               {!loading && <ArrowRight size={16} />}
             </button>
 
