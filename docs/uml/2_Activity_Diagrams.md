@@ -2,7 +2,60 @@
 
 This document details the Activity diagrams for the **MechDrive Studio** system, illustrating the flow of logic and operations.
 
-## 2.1 AI Optimization Flow
+## 2.1 Authentication Flow
+
+```mermaid
+flowchart TD
+    classDef startEnd fill:#000,stroke:#000,color:#fff;
+    classDef decision fill:#fff,stroke:#000,shape:diamond;
+
+    Start(( )):::startEnd
+    End((( ))):::startEnd
+    
+    subgraph User_Lane [Guest / User]
+        A1(Choose Login, Register, or Reset)
+        A6(Click Link in Email)
+        A8(Enter New Password)
+    end
+    
+    subgraph UI_Lane [AuthScreen]
+        D1{"Action?"}:::decision
+        A2(Submit Credentials)
+        A4(Submit Email for Reset)
+        A7(Show Update Password Form)
+        A9(Call updateUser API)
+    end
+    
+    subgraph Supabase_Lane [Supabase Auth]
+        A3(Create User & Send Confirm Email)
+        A5(Send Reset Link)
+        A10(Update Password in DB)
+        A11(Authenticate & Return Session)
+    end
+    
+    Start --> A1
+    A1 --> D1
+    
+    D1 -->|Register| A2
+    D1 -->|Login| A2
+    D1 -->|Forgot Password| A4
+    
+    A2 -->|Sign Up| A3
+    A2 -->|Sign In| A11
+    A4 --> A5
+    
+    A3 --> End
+    A5 --> A6
+    A11 --> End
+    
+    A6 --> A7
+    A7 --> A8
+    A8 --> A9
+    A9 --> A10
+    A10 --> End
+```
+
+## 2.2 AI Optimization Flow
 
 ```mermaid
 flowchart TD
@@ -22,12 +75,12 @@ flowchart TD
         A2(Validate Input Data)
         D1{" "}:::decision
         A3(Display Validation Error)
-        A7(Save Results to Supabase)
+        A7(Save Results directly to Supabase)
     end
     
     subgraph AI_Lane [FastAPI Engine]
         A4(Discretize Input to State Key)
-        A5(Lookup Q-Table by State Key)
+        A5(Lookup Q-Table from RAM/JSON)
         D2{" "}:::decision
         A6(Run gear_design + chain_design)
     end

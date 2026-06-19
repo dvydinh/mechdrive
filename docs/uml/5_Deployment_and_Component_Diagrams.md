@@ -25,14 +25,16 @@ flowchart TB
     end
     
     subgraph Supabase [<<device>> Supabase Managed Infrastructure]
+        Auth_Svc[<<component>> Supabase Auth Service]
         DB_Comp[<<component>> PostgreSQL Database]
         Storage[<<artifact>> Relational Data]
         
         DB_Comp -.->|<<manifest>>| Storage
+        Auth_Svc -->|sync user data| DB_Comp
     end
     
     Browser -- "<<protocol>> HTTPS" --> UI_Comp
     UI_Comp -- "<<protocol>> HTTPS/JSON" --> API_Comp
     UI_Comp -- "<<protocol>> HTTPS" --> DB_Comp
-    Auth_Comp -- "<<protocol>> HTTPS" --> DB_Comp
+    Auth_Comp -- "<<protocol>> HTTPS" --> Auth_Svc
 ```

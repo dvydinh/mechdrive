@@ -43,6 +43,8 @@ classDiagram
     class AuthScreen {
         +login(credentials) void
         +register(userData) void
+        +resetPassword(email) void
+        +updatePassword(newPassword) void
     }
     
     class ModuleProjects {
