@@ -1,10 +1,6 @@
 # 2. Activity Diagrams
 
-These diagrams follow standard UML Activity Diagram conventions: 
-- Rounded rectangles for actions
-- Diamonds for decision nodes (empty inside, conditions placed on outgoing edges)
-- Solid circles for start states and encircled solid circles for final states
-- Swimlanes (partitions) for role separation to indicate responsibility.
+This document details the Activity diagrams for the **MechDrive Studio** system, illustrating the flow of logic and operations.
 
 ## 2.1 AI Optimization Flow
 
@@ -17,24 +13,23 @@ flowchart TD
     End((( ))):::startEnd
     
     subgraph User_Lane [Mechanical Engineer]
-        A1(Input Parameters)
-        A8(Review AI Recommendation)
-        A9(Confirm & Save Design)
+        A1(Input P_yc, n_yc, u_total, L_h)
+        A8(Review AI Suggestion)
+        A9(Approve & Continue to Report)
     end
     
     subgraph UI_Lane [Frontend Client]
         A2(Validate Input Data)
         D1{" "}:::decision
         A3(Display Validation Error)
-        A7(Render Specification Tables)
+        A7(Save Results to Supabase)
     end
     
     subgraph AI_Lane [FastAPI Engine]
-        A4(Discretize Input to State)
-        A5(Lookup Action A from Q-Table)
-        A6(Calculate Mechanical Stresses)
+        A4(Discretize Input to State Key)
+        A5(Lookup Q-Table by State Key)
         D2{" "}:::decision
-        A10(Penalize & Explore New Action)
+        A6(Run gear_design + chain_design)
     end
     
     Start --> A1
@@ -46,13 +41,12 @@ flowchart TD
     
     D1 -->|"[Valid Data]"| A4
     A4 --> A5
-    A5 --> A6
-    A6 --> D2
+    A5 --> D2
     
-    D2 -->|"[Sigma > Allowable]"| A10
-    A10 --> A5
+    D2 -->|"[State Key Not Found]"| A3
     
-    D2 -->|"[Sigma <= Allowable]"| A7
+    D2 -->|"[State Key Found]"| A6
+    A6 --> A7
     A7 --> A8
     A8 --> A9
     A9 --> End

@@ -79,7 +79,13 @@ flowchart TB
 
 ### High-Level System Use Case
 
-![High-Level System Use Case](docs/uml/uc_high_level.svg)
+*The high-level use case diagram below illustrates the complete MechDrive Studio system boundary, showcasing how the Mechanical Engineer interacts with the main modules (Calculation, AI, Reporting) and how the system delegates data/AI processing to secondary actors (Supabase, Claude).*
+
+<div align="center">
+  <img src="docs/uml/uc_high_level.svg" alt="High-Level System Use Case">
+  <br>
+  <em>Figure 4.2: High-Level Use Case Diagram for MechDrive Studio</em>
+</div>
 
 ## 5. Software engineering: Object-Oriented Design (Class Diagrams)
 

@@ -1,20 +1,39 @@
 # 1. Use Case Diagrams
 
-This document provides detailed Use Case Diagrams for the **MechDrive Studio** system.
-To strictly follow UML theory:
-- **System Boundary**: Represented by a `subgraph` containing all use cases.
-- **Actors**: Primary actors (users) are placed on the left. Secondary actors (external systems/APIs) are placed on the right.
-- **Stick Figures**: Mermaid doesn't natively support stick figure drawing in flowcharts, so we use the `🧍` emoji for human actors and server/robot emojis for external systems to visually distinguish them.
-- **Granularity**: The diagrams are separated into 3 detailed subsystems based on the thesis specification (`DO_AN_DA_NGANH_SPEC.md`).
+This document details the Use Case diagrams for the **MechDrive Studio** system, structured into 3 core subsystems based on the engineering specification (`DO_AN_DA_NGANH_SPEC.md`).
+
+---
 
 ## 1.1 User & Workspace Management Subsystem
 
-![User & Workspace Management Subsystem](uc_user.svg)
+*This subsystem covers the authentication and workspace initialization process. Guests can register and log in, which invokes Supabase Auth. Engineers manage their workspaces, which can be extended by creating or deleting specific engineering projects.*
+
+<div align="center">
+  <img src="uc_user.svg" alt="User & Workspace Management Subsystem">
+  <br>
+  <em>Figure 1.1: Use Case Diagram for User & Workspace Management</em>
+</div>
+
+---
 
 ## 1.2 Mechanical Calculation Engine Subsystem (Core)
 
-![Mechanical Calculation Engine Subsystem](uc_calc.svg)
+*The core calculation engine allows the Mechanical Engineer to design motor, chain, and gear drives. The system pulls standard empirical data from Supabase. Complex sub-tasks like calculating sprocket teeth or checking gear stress are modularized via `<<include>>` or `<<extend>>` relationships.*
+
+<div align="center">
+  <img src="uc_calc.svg" alt="Mechanical Calculation Engine Subsystem">
+  <br>
+  <em>Figure 1.2: Use Case Diagram for Mechanical Calculation Engine</em>
+</div>
+
+---
 
 ## 1.3 AI Tools & Reporting Subsystem
 
-![AI Tools & Reporting Subsystem](uc_ai.svg)
+*This module highlights the AI Optimizer, which utilizes Q-Learning (Reinforcement Learning) to pre-evaluate the project's state space. It recommends the optimal material and predicts initial gear parameters (z1, psi_ba) early in the process to prevent mechanical failures and manual recalculation loops.*
+
+<div align="center">
+  <img src="uc_ai.svg" alt="AI Tools & Reporting Subsystem">
+  <br>
+  <em>Figure 1.3: Use Case Diagram for AI Tools & Reporting</em>
+</div>

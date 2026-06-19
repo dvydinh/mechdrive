@@ -1,72 +1,34 @@
 # 3. Class Diagrams
 
-These diagrams detail the structural design, applying visibility indicators (`+` public, `-` private, `#` protected) and correct UML relationship notations (`-->` association, `o--` aggregation, `*--` composition, `..>` dependency, `<|--` inheritance).
+This document details the structural design and object-oriented Class diagrams for the **MechDrive Studio** system.
 
 ## 3.1 Backend AI Engine (Domain Model)
 
 ```mermaid
 classDiagram
-    class OptimizationRequest {
+    class AIRequest {
         +float P_yc
         +float n_yc
         +float u_total
         +float L_h
-        +String load_type
-        +dict standards
+        +int load_type
     }
     
-    class AbstractResult {
-        <<abstract>>
-        +float a_w
-        +int z1
-        +int z2
-    }
-    
-    class GearResult {
-        +float m
-        +float sigma_H
-        +float sigma_F
-        +String material
-    }
-    
-    class ChainResult {
-        +float pitch
-        +float F_t
-        +float F_r
-    }
-    
-    AbstractResult <|-- GearResult
-    AbstractResult <|-- ChainResult
-    
-    class State {
-        +float P_dc
-        +float n_dc
-        +float L_h
-        +float u_total
-        +discretize() int
-    }
-    
-    class Action {
-        +String material
-        +float psi_ba
-        +decode() dict
+    class AIResponse {
+        +dict optimal_action
+        +dict physics_details
     }
     
     class AIEngine {
-        -dict q_table
-        -float learning_rate
-        -float discount_factor
-        +discretize_state(P: float, n: float, u: float, L: float) State
-        +get_best_action(s: State) Action
-        +calculate_physics(a: Action) GearResult
-        #update_q_value(s: State, a: Action, r: float) void
+        -dict Q_TABLE
+        +optimize_design(req: AIRequest) AIResponse
+        -discretize(value: float, bins: list) float
+        -gear_design(P_yc, n_yc, u_total, L_h, u_d, psi_ba, matID, gear_type) dict
+        -chain_design(P_kw, n_rpm, u_x, z1, load_type) dict
     }
     
-    AIEngine ..> OptimizationRequest : <<use>>
-    AIEngine --> State : creates
-    AIEngine --> Action : creates
-    AIEngine ..> GearResult : <<creates>>
-    AIEngine ..> ChainResult : <<creates>>
+    AIEngine ..> AIRequest : <<use>>
+    AIEngine ..> AIResponse : <<creates>>
 ```
 
 ## 3.2 Frontend Architecture (Component Classes)
@@ -97,14 +59,17 @@ classDiagram
     }
     
     class ModuleOptimizer {
-        -OptimizationRequest formData
-        +runAI() void
-        -validateData() boolean
+        -float P_yc
+        -float n_yc
+        -float u_total
+        -float L_h
+        -int load_type
+        +run() void
+        +approve() void
     }
     
     class SchemeReport {
-        +renderTables(result: GearResult) void
-        +exportData() PDF
+        +renderTables(result: dict) void
     }
 
     App *-- AuthScreen : contains

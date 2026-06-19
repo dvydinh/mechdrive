@@ -1,51 +1,23 @@
 @startuml
-left to right direction
 skinparam packageStyle rectangle
-skinparam nodesep 30
-skinparam ranksep 100
-skinparam wrapWidth 200
 
 actor "Mechanical Engineer" as eng
-actor "Supabase Storage" as store << System >>
-actor "Claude API (LLM)" as claude << System >>
+actor "Supabase System" as store << System >>
 
-package "AI Tools & Reporting" {
-  usecase "Extract via OCR/NER" as UC1
-  usecase "Upload Image/PDF" as UC1_1
-  
-  usecase "Suggest via Random Forest" as UC2
-  usecase "Load ML Model" as UC2_1
-  
-  usecase "Optimize via Genetic Algo" as UC3
-  usecase "Set Constraints" as UC3_1
-  usecase "View Pareto Front" as UC3_2
-  
-  usecase "Generate Technical Report" as UC4
-  usecase "Prompt LLM" as UC4_1
-  
-  usecase "Export Report" as UC5
-  usecase "Export to PDF" as UC5_1
-  usecase "Export to DOCX" as UC5_2
+package "AI Optimizer" {
+  usecase "Optimize via Q-Learning" as UC1
+  usecase "Discretize Input State" as UC1_1
+  usecase "Lookup Q-Table" as UC1_2
+  usecase "Recommend Material & Gear Type" as UC1_3
+  usecase "Predict z1, psi_ba, u_d" as UC1_4
 }
 
-eng --> UC1
-UC1_1 ..up..> UC1 : <<extend>>
+eng -right-> UC1
+UC1 .down.> UC1_1 : <<include>>
+UC1 .down.> UC1_2 : <<include>>
+UC1 .down.> UC1_3 : <<include>>
+UC1 .down.> UC1_4 : <<include>>
 
-eng --> UC2
-UC2 ..down..> UC2_1 : <<include>>
-UC2_1 --> store
-
-eng --> UC3
-UC3 ..down..> UC3_1 : <<include>>
-UC3_2 ..up..> UC3 : <<extend>>
-
-eng --> UC4
-UC4 ..down..> UC4_1 : <<include>>
-UC4_1 --> claude
-
-eng --> UC5
-UC5_1 ..up..> UC5 : <<extend>>
-UC5_2 ..up..> UC5 : <<extend>>
-UC5 ..up..> UC4 : <<extend>>
+store -left-> UC1_2
 
 @enduml

@@ -1,6 +1,6 @@
 # 5. Deployment and Component Diagrams
 
-Applying UML standard deployment artifacts (`<<artifact>>`), hardware/execution nodes (`<<device>>`, `<<execution environment>>`), and software components (`<<component>>`) with associated protocols and dependencies.
+This document details the Deployment and Component diagrams for the **MechDrive Studio** system's infrastructure.
 
 ## 5.1 System Deployment & Component View
 
@@ -17,9 +17,9 @@ flowchart TB
         UI_Comp -->|<<use>>| Auth_Comp
     end
     
-    subgraph Railway [<<execution environment>> Railway Container]
+    subgraph Render [<<execution environment>> Render Container]
         API_Comp[<<component>> FastAPI Optimization Engine]
-        QTable[<<artifact>> Q-Table Model Weights]
+        QTable[<<artifact>> Q-Table JSON]
         
         API_Comp -.->|<<manifest>>| QTable
     end
@@ -31,9 +31,8 @@ flowchart TB
         DB_Comp -.->|<<manifest>>| Storage
     end
     
-    Browser -- "<<protocol>> HTTP/REST" --> UI_Comp
+    Browser -- "<<protocol>> HTTPS" --> UI_Comp
     UI_Comp -- "<<protocol>> HTTPS/JSON" --> API_Comp
-    UI_Comp -- "<<protocol>> WebSocket/HTTPS" --> Auth_Comp
-    API_Comp -- "<<protocol>> TCP/IP" --> DB_Comp
-    Auth_Comp -- "<<protocol>> TCP/IP" --> DB_Comp
+    UI_Comp -- "<<protocol>> HTTPS" --> DB_Comp
+    Auth_Comp -- "<<protocol>> HTTPS" --> DB_Comp
 ```

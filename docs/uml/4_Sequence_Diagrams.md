@@ -1,86 +1,110 @@
 # 4. Sequence Diagrams
 
-These sequence diagrams strictly follow UML guidelines:
-- Method signatures as messages (directed to the receiving object)
-- Proper use of lifelines and activation boxes
-- Synchronous/asynchronous arrows
-- Fragment operators (`alt` for alternatives, `opt` for optional, `loop` for iterations).
+This document details the Sequence diagrams for the **MechDrive Studio** system, illustrating object interactions over time.
 
-## 4.1 AI Optimization & Project Save Sequence
+## 4.1 AI Optimization & Save Sequence
 
 ```mermaid
 sequenceDiagram
     actor Eng as :MechanicalEngineer
     participant UI as ui:ModuleOptimizer
-    participant API as api:AIEngine
-    participant DB as db:SupabaseDB
+    participant API as api:FastAPIEngine
+    participant DB as db:Supabase
 
-    Eng->>UI: clickOptimizeBtn(formData)
+    Eng->>UI: inputParams(P_yc, n_yc, u_total, L_h)
     activate UI
-    UI->>UI: validateData(formData)
+    UI->>UI: validateData(params)
     
-    alt [not isValid]
-        UI-->>Eng: renderValidationError()
-    else [isValid]
-        UI->>API: processOptimization(request)
+    alt [Invalid Data]
+        UI-->>Eng: Error Message
+    else [Valid Data]
+        UI->>API: POST /ai/optimize-design(params)
         activate API
-        API->>API: discretize_state(P_yc, n_yc)
         
-        loop [until valid action found]
-            API->>API: get_best_action(state)
-            API->>API: calculate_physics(action)
-        end
+        API->>API: discretize(P_yc, n_yc, u_total, L_h)
+        API->>API: Q_TABLE.get(state_key)
+        API->>API: gear_design(ai_seeds)
+        API->>API: chain_design(ai_seeds)
         
-        API-->>UI: return DesignResult
+        API-->>UI: AIResponse(optimal_action, physics_details)
         deactivate API
         
-        UI->>UI: updateUIState(DesignResult)
-        UI-->>Eng: displayReportTables()
+        UI->>DB: upsert("TRANSMISSION", gearData)
+        activate DB
+        DB-->>UI: OK
+        deactivate DB
         
-        opt [user clicks save]
-            Eng->>UI: clickSaveProject()
-            UI->>DB: insert("DESIGN_SCHEME", schemaData)
-            activate DB
-            DB-->>UI: 201 Created
-            deactivate DB
-            UI-->>Eng: renderSuccessToast()
-        end
+        UI->>DB: upsert("GEAR_TRANS", gearResult)
+        activate DB
+        DB-->>UI: OK
+        deactivate DB
+        
+        UI->>DB: upsert("CHAIN_TRANS", chainResult)
+        activate DB
+        DB-->>UI: OK
+        deactivate DB
+        
+        UI-->>Eng: Display AI Suggestion & Physics Results
     end
     deactivate UI
 ```
 
-## 4.2 Project Deletion Sequence
+## 4.2 User Registration Sequence
+
+```mermaid
+sequenceDiagram
+    actor Guest as :Guest
+    participant UI as ui:AuthScreen
+    participant API as api:FastAPIEngine
+    participant DB as db:Supabase
+
+    Guest->>UI: inputCredentials(email, password, userName)
+    activate UI
+    
+    UI->>API: POST /users/register(userData)
+    activate API
+    
+    API->>DB: auth.sign_up(email, password)
+    activate DB
+    DB-->>API: User object
+    deactivate DB
+    
+    API->>DB: insert("USER", userData)
+    activate DB
+    DB-->>API: UserRecord
+    deactivate DB
+    
+    API-->>UI: UserResponse
+    deactivate API
+    
+    UI-->>Guest: Registration Success
+    deactivate UI
+```
+
+## 4.3 Project Deletion Sequence
 
 ```mermaid
 sequenceDiagram
     actor Eng as :MechanicalEngineer
     participant UI as ui:ModuleProjects
-    participant DB as db:SupabaseDB
+    participant API as api:FastAPIEngine
+    participant DB as db:Supabase
 
     Eng->>UI: clickDeleteIcon(projectID)
     activate UI
     
-    UI->>DB: delete("GEAR_TRANS", projectID)
+    UI->>API: DELETE /projects/{project_id}
+    activate API
+    
+    API->>DB: delete("PROJECT", projectID)
     activate DB
-    DB-->>UI: return status 200
+    DB-->>API: success
     deactivate DB
     
-    UI->>DB: delete("CHAIN_TRANS", projectID)
-    activate DB
-    DB-->>UI: return status 200
-    deactivate DB
-    
-    UI->>DB: delete("DESIGN_SCHEME", projectID)
-    activate DB
-    DB-->>UI: return status 200
-    deactivate DB
-    
-    UI->>DB: delete("PROJECT", projectID)
-    activate DB
-    DB-->>UI: return success
-    deactivate DB
+    API-->>UI: Status 200
+    deactivate API
     
     UI->>UI: removeProjectFromState(projectID)
-    UI-->>Eng: hideProjectFromView()
+    UI-->>Eng: Updated Dashboard View
     deactivate UI
 ```
