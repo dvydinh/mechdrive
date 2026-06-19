@@ -26,6 +26,11 @@ package "User & Workspace Management" {
   usecase "View Project Dashboard" as UC4_4
 }
 
+UC1 -[hidden]down-> UC2
+UC2 -[hidden]down-> UC3
+UC3 -[hidden]down-> UC6
+UC6 -[hidden]down-> UC4
+
 guest --> UC1
 UC1 ..> UC1_1 : <<include>>
 UC1 <.. UC1_3 : <<extend>>

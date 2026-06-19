@@ -21,6 +21,10 @@ package "Calculation Engine" {
   usecase "Lookup Standard Data" as UC5
 }
 
+UC1 -[hidden]down-> UC2
+UC2 -[hidden]down-> UC3
+UC3 -[hidden]down-> UC5
+
 eng --> UC1
 UC1 ..> UC1_1 : <<include>>
 UC1 ..> UC1_2 : <<include>>
