@@ -1,0 +1,37 @@
+@startuml
+skinparam componentStyle uml2
+skinparam nodesep 50
+skinparam ranksep 50
+
+node "Client Device" <<device>> {
+    node "Web Browser" <<execution environment>> {
+    }
+}
+
+node "Vercel Serverless" <<execution environment>> {
+    component "Next.js React Frontend" as UI_Comp
+    component "Supabase Auth SDK" as Auth_Comp
+    UI_Comp ..> Auth_Comp : <<use>>
+}
+
+node "Render Container" <<execution environment>> {
+    component "FastAPI Optimization Engine" as API_Comp
+    artifact "Q-Table JSON" as QTable
+    API_Comp ..> QTable : <<manifest>>
+}
+
+node "Supabase Managed Infrastructure" <<device>> {
+    component "Supabase Auth Service" as Auth_Svc
+    component "PostgreSQL Database" as DB_Comp
+    artifact "Relational Data" as Storage
+    
+    DB_Comp ..> Storage : <<manifest>>
+    Auth_Svc --> DB_Comp : sync user data
+}
+
+"Web Browser" --> UI_Comp : <<protocol>> HTTPS
+UI_Comp --> API_Comp : <<protocol>> HTTPS/JSON
+UI_Comp --> DB_Comp : <<protocol>> HTTPS
+Auth_Comp --> Auth_Svc : <<protocol>> HTTPS
+
+@enduml

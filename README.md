@@ -21,39 +21,11 @@ The system is built upon a microservices-oriented architecture and a Backend-as-
 
 > **Note:** For a comprehensive view of the system's component and deployment architecture, please see [System Deployment & Component View](docs/uml/5_Deployment_and_Component_Diagrams.md).
 
-```mermaid
-flowchart TB
-    subgraph Client [<<device>> Client Device]
-        Browser[<<execution environment>> Web Browser]
-    end
-    
-    subgraph Vercel [<<execution environment>> Vercel Serverless]
-        UI_Comp[<<component>> Next.js React Frontend]
-        Auth_Comp[<<component>> Supabase Auth SDK]
-        
-        UI_Comp -->|<<use>>| Auth_Comp
-    end
-    
-    subgraph Railway [<<execution environment>> Railway Container]
-        API_Comp[<<component>> FastAPI Optimization Engine]
-        QTable[<<artifact>> Q-Table Model Weights]
-        
-        API_Comp -.->|<<manifest>>| QTable
-    end
-    
-    subgraph Supabase [<<device>> Supabase Managed Infrastructure]
-        DB_Comp[<<component>> PostgreSQL Database]
-        Storage[<<artifact>> Relational Data]
-        
-        DB_Comp -.->|<<manifest>>| Storage
-    end
-    
-    Browser -- "<<protocol>> HTTP/REST" --> UI_Comp
-    UI_Comp -- "<<protocol>> HTTPS/JSON" --> API_Comp
-    UI_Comp -- "<<protocol>> WebSocket/HTTPS" --> Auth_Comp
-    API_Comp -- "<<protocol>> TCP/IP" --> DB_Comp
-    Auth_Comp -- "<<protocol>> TCP/IP" --> DB_Comp
-```
+<div align="center">
+  <img src="docs/uml/deployment.svg" alt="System Deployment Diagram">
+  <br>
+  <em>Figure 3.1: System Deployment and Component Architecture</em>
+</div>
 
 ## 4. Software engineering: Requirements & Use Cases
 
