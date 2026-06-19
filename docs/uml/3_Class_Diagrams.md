@@ -1,7 +1,5 @@
 # 3. Class Diagrams
 
-This document details the structural design and object-oriented Class diagrams for the **MechDrive Studio** system.
-
 ## 3.1 Backend AI Engine (Domain Model)
 
 ```mermaid

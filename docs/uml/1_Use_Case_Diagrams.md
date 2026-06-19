@@ -1,7 +1,5 @@
 # 1. Use Case Diagrams
 
-This document details the Use Case diagrams for the **MechDrive Studio** system, structured into 3 core subsystems based on the engineering specification (`DO_AN_DA_NGANH_SPEC.md`).
-
 ---
 
 ## 1.1 User & Workspace Management Subsystem

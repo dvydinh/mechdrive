@@ -1,7 +1,5 @@
 # 4. Sequence Diagrams
 
-This document details the Sequence diagrams for the **MechDrive Studio** system, illustrating object interactions over time.
-
 ## 4.1 AI Optimization & Save Sequence
 
 ```mermaid

@@ -1,7 +1,5 @@
 # 2. Activity Diagrams
 
-This document details the Activity diagrams for the **MechDrive Studio** system, illustrating the flow of logic and operations.
-
 ## 2.1 Authentication Flow
 
 ```mermaid
