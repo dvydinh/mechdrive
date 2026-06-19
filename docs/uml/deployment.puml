@@ -1,37 +1,42 @@
 @startuml
 skinparam componentStyle uml2
-skinparam nodesep 50
-skinparam ranksep 50
+skinparam nodesep 60
+skinparam ranksep 60
 
-node "Client Device" <<device>> {
-    node "Web Browser" <<execution environment>> {
-    }
+node "Client Device" <<device>> as clientNode {
+    node "Web Browser" <<execution environment>> as browserEnv
 }
 
-node "Vercel Serverless" <<execution environment>> {
+node "Vercel Serverless" <<execution environment>> as vercelNode {
     component "Next.js React Frontend" as UI_Comp
     component "Supabase Auth SDK" as Auth_Comp
     UI_Comp ..> Auth_Comp : <<use>>
 }
 
-node "Render Container" <<execution environment>> {
+node "Render Container" <<execution environment>> as renderNode {
     component "FastAPI Optimization Engine" as API_Comp
     artifact "Q-Table JSON" as QTable
-    API_Comp ..> QTable : <<manifest>>
+    API_Comp ..> QTable : <<read>>
 }
 
-node "Supabase Managed Infrastructure" <<device>> {
+node "Supabase Managed Infrastructure" <<device>> as supaNode {
     component "Supabase Auth Service" as Auth_Svc
     component "PostgreSQL Database" as DB_Comp
     artifact "Relational Data" as Storage
     
-    DB_Comp ..> Storage : <<manifest>>
-    Auth_Svc --> DB_Comp : sync user data
+    DB_Comp ..> Storage : <<read/write>>
+    Auth_Svc ..> DB_Comp : <<sync>>
 }
 
-"Web Browser" --> UI_Comp : <<protocol>> HTTPS
-UI_Comp --> API_Comp : <<protocol>> HTTPS/JSON
-UI_Comp --> DB_Comp : <<protocol>> HTTPS
-Auth_Comp --> Auth_Svc : <<protocol>> HTTPS
+' Communication paths between nodes
+clientNode -- vercelNode : <<protocol>> HTTPS
+vercelNode -- renderNode : <<protocol>> HTTPS
+vercelNode -- supaNode : <<protocol>> HTTPS
+
+' Dependencies between components across boundaries
+browserEnv ..> UI_Comp : <<access>>
+UI_Comp ..> API_Comp : <<HTTP POST>>
+UI_Comp ..> DB_Comp : <<REST API>>
+Auth_Comp ..> Auth_Svc : <<REST API>>
 
 @enduml
