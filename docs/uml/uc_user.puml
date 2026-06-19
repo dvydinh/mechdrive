@@ -1,4 +1,5 @@
 @startuml
+left to right direction
 skinparam packageStyle rectangle
 
 actor "Guest" as guest
@@ -25,35 +26,30 @@ package "User & Workspace Management" {
   usecase "View Project Dashboard" as UC4_4
 }
 
-UC1 -[hidden]down-> UC2
-UC2 -[hidden]down-> UC3
-UC3 -[hidden]down-> UC6
-UC6 -[hidden]down-> UC4
+guest --> UC1
+UC1 ..> UC1_1 : <<include>>
+UC1 <.. UC1_3 : <<extend>>
 
-guest -right-> UC1
-UC1 .down.> UC1_1 : <<include>>
-UC1 <.down. UC1_3 : <<extend>>
+guest --> UC2
+UC2 ..> UC1_1 : <<include>>
+UC2 ..> UC2_1 : <<include>>
+UC2 <.. UC2_2 : <<extend>>
 
-guest -right-> UC2
-UC2 .down.> UC1_1 : <<include>>
-UC2 .down.> UC2_1 : <<include>>
-UC2 <.down. UC2_2 : <<extend>>
+guest --> UC3
+UC3 ..> UC3_1 : <<include>>
 
-guest -right-> UC3
-UC3 .down.> UC3_1 : <<include>>
+eng --> UC6
 
-eng -right-> UC6
+eng --> UC4
+UC4 <.. UC4_1 : <<extend>>
+UC4 <.. UC4_3 : <<extend>>
+UC4 <.. UC4_4 : <<extend>>
 
-eng -right-> UC4
-UC4 <.down. UC4_1 : <<extend>>
-UC4 <.down. UC4_3 : <<extend>>
-UC4 <.down. UC4_4 : <<extend>>
-
-supa -left-> UC1_3
-supa -left-> UC2_1
-supa -left-> UC3_1
-supa -left-> UC4_1
-supa -left-> UC4_3
-supa -left-> UC4_4
+UC1_3 <-- supa
+UC2_1 <-- supa
+UC3_1 <-- supa
+UC4_1 <-- supa
+UC4_3 <-- supa
+UC4_4 <-- supa
 
 @enduml

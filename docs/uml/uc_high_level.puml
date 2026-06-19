@@ -1,9 +1,11 @@
 @startuml
+left to right direction
 skinparam packageStyle rectangle
 
 actor "Guest" as guest
 actor "Mechanical Engineer" as eng
 actor "Supabase System" as supa << System >>
+actor "Claude AI API" as claude << System >>
 
 package "MechDrive Studio" {
   usecase "Manage Account & Workspace" as UC1
@@ -11,17 +13,15 @@ package "MechDrive Studio" {
   usecase "Optimize via Q-Learning" as UC3
 }
 
-UC1 -[hidden]down-> UC2
-UC2 -[hidden]down-> UC3
-
 guest <|- eng : <<inherits>>
 
-guest -right-> UC1
-eng -right-> UC2
-eng -right-> UC3
+guest --> UC1
+eng --> UC2
+eng --> UC3
 
-supa -left-> UC1
-supa -left-> UC2
-supa -left-> UC3
+UC1 <-- supa
+UC2 <-- supa
+UC3 <-- supa
+UC3 <-- claude
 
 @enduml
