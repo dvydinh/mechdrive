@@ -38,12 +38,11 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
 
         // Sync to USER_ACCOUNT table
         if (data.user) {
-          await supabase.from("USER_ACCOUNT").upsert({
-            userID: data.user.id,
+          await supabase.from("USER_ACCOUNT").insert({
             userName: name || "Sinh viên",
             email: email,
             password: "managed_by_supabase_auth",
-          }, { onConflict: "email" });
+          });
         }
 
         setInfo("Đăng ký thành công! Kiểm tra email để xác nhận tài khoản.");
