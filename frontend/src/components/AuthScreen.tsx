@@ -58,9 +58,16 @@ export function AuthScreen({ onAuth }: { onAuth: (user: { id: string; name: stri
         if (signInError) throw signInError;
 
         if (data.user) {
+          // lookup integer userID from USER_ACCOUNT
+          const { data: row } = await supabase
+            .from("USER_ACCOUNT")
+            .select("userID, userName")
+            .eq("email", data.user.email)
+            .single();
+
           onAuth({
-            id: data.user.id,
-            name: data.user.user_metadata?.userName || email.split("@")[0],
+            id: row?.userID?.toString() || data.user.id,
+            name: row?.userName || data.user.user_metadata?.userName || email.split("@")[0],
             email: data.user.email || email,
           });
         }

@@ -24,9 +24,15 @@ export default function App() {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
+        const { data: row } = await supabase
+          .from("USER_ACCOUNT")
+          .select("userID, userName")
+          .eq("email", session.user.email)
+          .single();
+
         setUser({
-          id: session.user.id,
-          name: session.user.user_metadata?.userName || session.user.email?.split("@")[0] || "User",
+          id: row?.userID?.toString() || session.user.id,
+          name: row?.userName || session.user.user_metadata?.userName || session.user.email?.split("@")[0] || "User",
           email: session.user.email || "",
         });
       }
