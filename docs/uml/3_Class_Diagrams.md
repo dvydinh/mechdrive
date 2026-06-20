@@ -35,7 +35,7 @@ classDiagram
 ```mermaid
 %%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 classDiagram
-    class App {
+    class WebClient {
         +Session userSession
         +render() void
     }
@@ -74,8 +74,8 @@ classDiagram
         +renderTables(result: dict) void
     }
 
-    App *-- AuthScreen : contains
-    App *-- ModuleProjects : contains
+    WebClient *-- AuthScreen : contains
+    WebClient *-- ModuleProjects : contains
     ModuleProjects *-- ProjectWorkspace : manages
     ProjectWorkspace *-- ModuleOptimizer : manages
     ProjectWorkspace *-- SchemeReport : manages
