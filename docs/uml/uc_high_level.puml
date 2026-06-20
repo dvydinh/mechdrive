@@ -2,8 +2,10 @@
 left to right direction
 skinparam packageStyle rectangle
 
-actor "Guest" as guest
-actor "Mechanical Engineer" as eng
+together {
+  actor "Guest" as guest
+  actor "Mechanical Engineer" as eng
+}
 actor "Supabase System" as supa << System >>
 
 package "MechDrive Studio" {
