@@ -3,6 +3,7 @@
 ## 4.1 AI Optimization & Save Sequence
 
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 sequenceDiagram
     actor Eng as :MechanicalEngineer
     participant UI as ui:ModuleOptimizer
@@ -50,6 +51,7 @@ sequenceDiagram
 ## 4.2 User Registration Sequence
 
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 sequenceDiagram
     actor Guest as :Guest
     participant UI as ui:AuthScreen
@@ -76,6 +78,7 @@ sequenceDiagram
 ## 4.3 Reset Password Sequence
 
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 sequenceDiagram
     actor Guest as :Guest
     participant UI as ui:AuthScreen
@@ -97,6 +100,7 @@ sequenceDiagram
 ## 4.4 Project Deletion Sequence
 
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 sequenceDiagram
     actor Eng as :MechanicalEngineer
     participant UI as ui:ModuleProjects

@@ -3,6 +3,7 @@
 ## 2.1 Authentication Flow
 
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 flowchart TD
     classDef startEnd fill:#000,stroke:#000,color:#fff;
     classDef decision fill:#fff,stroke:#000,shape:diamond;
@@ -56,6 +57,7 @@ flowchart TD
 ## 2.2 AI Optimization Flow
 
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 flowchart TD
     classDef startEnd fill:#000,stroke:#000,color:#fff;
     classDef decision fill:#fff,stroke:#000,shape:diamond;

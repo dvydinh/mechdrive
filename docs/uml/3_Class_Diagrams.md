@@ -3,6 +3,7 @@
 ## 3.1 Backend AI Engine (Domain Model)
 
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 classDiagram
     class AIRequest {
         +float P_yc
@@ -32,6 +33,7 @@ classDiagram
 ## 3.2 Frontend Architecture (Component Classes)
 
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 classDiagram
     class App {
         +Session userSession

@@ -68,6 +68,7 @@ The system utilizes React functional components on the frontend and Pydantic dat
 > **Note:** For comprehensive details on object-oriented structures, including visibility and interface realization, refer to [Class Diagrams](docs/uml/3_Class_Diagrams.md).
 
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 classDiagram
     class OptimizationRequest {
         +float P_yc
@@ -135,6 +136,7 @@ classDiagram
 ### 5.2. Frontend component diagram
 
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 classDiagram
     class App {
         +Session userSession
@@ -256,6 +258,7 @@ For production, the FastAPI server freezes the Q-Table and strictly exploits the
 > **Note:** For a complete suite of sequence diagrams covering all use cases, see [Sequence Diagrams](docs/uml/4_Sequence_Diagrams.md). Also, see [Activity Diagrams](docs/uml/2_Activity_Diagrams.md) for the equivalent workflow logic.
 
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 sequenceDiagram
     actor Eng as :MechanicalEngineer
     participant UI as ui:ModuleOptimizer
@@ -298,6 +301,7 @@ sequenceDiagram
 
 ### 9.2. Project management sequence
 ```mermaid
+%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 sequenceDiagram
     actor Eng as :MechanicalEngineer
     participant UI as ui:ModuleProjects
