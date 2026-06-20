@@ -1,6 +1,6 @@
 # MechDrive Studio: A Q-learning integrated platform for mechanical drive design
 
-🌐 Live access: https://mechdrive.vercel.app/
+Live access: https://mechdrive.vercel.app/
 
 ## 1. Project team
 
