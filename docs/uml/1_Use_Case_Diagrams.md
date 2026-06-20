@@ -4,7 +4,7 @@
 
 ## 1.1 User & Workspace Management Subsystem
 
-*This subsystem covers the authentication and workspace initialization process. Guests can register and log in, which invokes Supabase Auth. Engineers manage their workspaces, which can be extended by creating or deleting specific engineering projects.*
+*This subsystem covers the authentication and workspace initialization process. Users can register and log in, which invokes Supabase Auth, and manage their workspaces, which can be extended by creating or deleting specific engineering projects.*
 
 <div align="center">
   <img src="uc_user.svg" alt="User & Workspace Management Subsystem">
@@ -16,7 +16,7 @@
 
 ## 1.2 Mechanical Calculation Engine Subsystem (Core)
 
-*The core calculation engine allows the Mechanical Engineer to design motor, chain, and gear drives. The system pulls standard empirical data from Supabase. Complex sub-tasks like calculating sprocket teeth or checking gear stress are modularized via `<<include>>` or `<<extend>>` relationships.*
+*The core calculation engine allows the User to design motor, chain, and gear drives. The system pulls standard empirical data from Supabase. Complex sub-tasks like calculating sprocket teeth or checking gear stress are modularized via `<<include>>` or `<<extend>>` relationships.*
 
 <div align="center">
   <img src="uc_calc.svg" alt="Mechanical Calculation Engine Subsystem">

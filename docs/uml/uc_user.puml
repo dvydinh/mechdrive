@@ -2,11 +2,7 @@
 left to right direction
 skinparam packageStyle rectangle
 
-together {
-  actor "Guest" as guest
-  actor "Mechanical Engineer" as eng
-}
-
+actor "User" as user
 actor "Supabase System" as supa << System >>
 
 package "User & Workspace Management" {
@@ -28,21 +24,21 @@ package "User & Workspace Management" {
   usecase "View Project Dashboard" as UC4_4
 }
 
-guest --> UC1
+user --> UC1
 UC1 ..> UC1_1 : <<include>>
 UC1 <.. UC1_3 : <<extend>>
 
-guest --> UC2
+user --> UC2
 UC2 ..> UC1_1 : <<include>>
 UC2 ..> UC2_1 : <<include>>
 UC2 <.. UC2_2 : <<extend>>
 
-guest --> UC3
+user --> UC3
 UC3 ..> UC3_1 : <<include>>
 
-eng --> UC6
+user --> UC6
 
-eng --> UC4
+user --> UC4
 UC4 <.. UC4_1 : <<extend>>
 UC4 <.. UC4_3 : <<extend>>
 UC4 <.. UC4_4 : <<extend>>

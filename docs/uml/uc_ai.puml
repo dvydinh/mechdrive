@@ -2,7 +2,7 @@
 left to right direction
 skinparam packageStyle rectangle
 
-actor "Mechanical Engineer" as eng
+actor "User" as user
 
 package "AI Optimizer" {
   together {
@@ -15,7 +15,7 @@ package "AI Optimizer" {
   usecase "Predict z1, psi_ba, u_d" as UC1_4
 }
 
-eng --> UC1
+user --> UC1
 UC1 ..> UC1_1 : <<include>>
 UC1 ..> UC1_2 : <<include>>
 UC1 ..> UC1_3 : <<include>>

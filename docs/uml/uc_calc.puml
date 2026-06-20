@@ -2,7 +2,7 @@
 left to right direction
 skinparam packageStyle rectangle
 
-actor "Mechanical Engineer" as eng
+actor "User" as user
 actor "Supabase System" as db << System >>
 
 package "Calculation Engine" {
@@ -21,19 +21,19 @@ package "Calculation Engine" {
   usecase "Check Gear Stress (sigma_H, sigma_F)" as UC3_3
 }
 
-eng --> UC1
+user --> UC1
 UC1 ..> UC1_1 : <<include>>
 UC1 ..> UC1_2 : <<include>>
 
-eng --> UC2
+user --> UC2
 UC2 ..> UC2_1 : <<include>>
 UC2 ..> UC2_2 : <<include>>
 
-eng --> UC3
+user --> UC3
 UC3 ..> UC3_2 : <<include>>
 UC3 ..> UC3_3 : <<include>>
 
-eng --> UC5
+user --> UC5
 
 UC1_2 <-- db
 UC2 <-- db

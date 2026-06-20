@@ -2,11 +2,7 @@
 left to right direction
 skinparam packageStyle rectangle
 
-together {
-  actor "Guest" as guest
-  actor "Mechanical Engineer" as eng
-}
-
+actor "User" as user
 actor "Supabase System" as supa << System >>
 
 package "MechDrive Studio" {
@@ -17,11 +13,9 @@ package "MechDrive Studio" {
   }
 }
 
-guest <|- eng : <<inherits>>
-
-guest --> UC1
-eng --> UC2
-eng --> UC3
+user --> UC1
+user --> UC2
+user --> UC3
 
 UC1 <-- supa
 UC2 <-- supa
