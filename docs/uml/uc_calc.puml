@@ -38,9 +38,9 @@ UC3 .down.> UC3_3 : <<include>>
 
 eng -right-> UC5
 
-UC1_2 <-right- db
-UC2 <-right- db
-UC3 <-right- db
-UC5 <-right- db
+db -left-> UC1_2
+db -left-> UC2
+db -left-> UC3
+db -left-> UC5
 
 @enduml

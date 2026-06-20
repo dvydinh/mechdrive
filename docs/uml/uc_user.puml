@@ -49,11 +49,11 @@ UC4 <.down. UC4_1 : <<extend>>
 UC4 <.down. UC4_3 : <<extend>>
 UC4 <.down. UC4_4 : <<extend>>
 
-UC1_3 <-right- supa
-UC2_1 <-right- supa
-UC3_1 <-right- supa
-UC4_1 <-right- supa
-UC4_3 <-right- supa
-UC4_4 <-right- supa
+supa -left-> UC1_3
+supa -left-> UC2_1
+supa -left-> UC3_1
+supa -left-> UC4_1
+supa -left-> UC4_3
+supa -left-> UC4_4
 
 @enduml

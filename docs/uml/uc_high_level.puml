@@ -20,8 +20,8 @@ guest -right-> UC1
 eng -right-> UC2
 eng -right-> UC3
 
-UC1 <-right- supa
-UC2 <-right- supa
-UC3 <-right- supa
+supa -left-> UC1
+supa -left-> UC2
+supa -left-> UC3
 
 @enduml
