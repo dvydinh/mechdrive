@@ -5,7 +5,10 @@ skinparam packageStyle rectangle
 actor "Mechanical Engineer" as eng
 
 package "AI Optimizer" {
-  usecase "Optimize via Q-Learning" as UC1
+  together {
+    usecase "Optimize via Q-Learning" as UC1
+  }
+  
   usecase "Discretize Input State" as UC1_1
   usecase "Lookup Q-Table (local JSON)" as UC1_2
   usecase "Recommend Material & Gear Type" as UC1_3

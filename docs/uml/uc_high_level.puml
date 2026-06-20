@@ -1,30 +1,30 @@
 @startuml
+left to right direction
 skinparam packageStyle rectangle
 
-actor "Guest" as guest
-actor "Mechanical Engineer" as eng
-actor "Supabase System" as supa << System >>
-
-guest -[hidden]right-> supa
-eng -[hidden]right-> supa
-
-package "MechDrive Studio" {
-  usecase "Manage Account & Workspace" as UC1
-  usecase "Design Mechanical Drives" as UC2
-  usecase "Optimize via Q-Learning" as UC3
+together {
+  actor "Guest" as guest
+  actor "Mechanical Engineer" as eng
 }
 
-UC1 -[hidden]down-> UC2
-UC2 -[hidden]down-> UC3
+actor "Supabase System" as supa << System >>
+
+package "MechDrive Studio" {
+  together {
+    usecase "Manage Account & Workspace" as UC1
+    usecase "Design Mechanical Drives" as UC2
+    usecase "Optimize via Q-Learning" as UC3
+  }
+}
 
 guest <|- eng : <<inherits>>
 
-guest -right-> UC1
-eng -right-> UC2
-eng -right-> UC3
+guest --> UC1
+eng --> UC2
+eng --> UC3
 
-supa -left-> UC1
-supa -left-> UC2
-supa -left-> UC3
+UC1 <-- supa
+UC2 <-- supa
+UC3 <-- supa
 
 @enduml
