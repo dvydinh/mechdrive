@@ -19,7 +19,7 @@ MechDrive Studio is a specialized web-based engineering platform dedicated to th
 
 The system is built upon a microservices-oriented architecture and a Backend-as-a-Service (BaaS) paradigm, ensuring high cohesion and low coupling.
 
-> **Note:** For a comprehensive view of the system's component and deployment architecture, please see [System Deployment & Component View](docs/uml/5_Deployment_and_Component_Diagrams.md).
+See [System Deployment & Component View](docs/uml/5_Deployment_and_Component_Diagrams.md) for full deployment details.
 
 <div align="center">
   <img src="docs/uml/deployment.svg" alt="System Deployment Diagram">
@@ -47,7 +47,7 @@ The system is built upon a microservices-oriented architecture and a Backend-as-
 
 ### 4.2. Use case diagram
 
-> **Note:** The Use Cases have been meticulously detailed and split into 3 core subsystems matching the technical specification. For the comprehensive diagrams covering all detailed use cases, please refer to [Detailed Use Case Diagrams](docs/uml/1_Use_Case_Diagrams.md).
+Check out the [Detailed Use Case Diagrams](docs/uml/1_Use_Case_Diagrams.md) for the full breakdown of all subsystems.
 
 ### High-level system use case
 
@@ -65,7 +65,7 @@ The system utilizes React functional components on the frontend and Pydantic dat
 
 ### 5.1. Backend class diagram (FastAPI models)
 
-> **Note:** For comprehensive details on object-oriented structures, including visibility and interface realization, refer to [Class Diagrams](docs/uml/3_Class_Diagrams.md).
+See [Class Diagrams](docs/uml/3_Class_Diagrams.md) for more interface details.
 
 ```mermaid
 %%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
@@ -181,10 +181,7 @@ classDiagram
 
 ## 6. Entity-relationship diagram (EERD)
 
-<!-- INSERT YOUR EERD IMAGE HERE -->
 <img width="1307" height="1328" alt="Copy of EERD drawio (1)" src="https://github.com/user-attachments/assets/3ae4a8f1-fccd-4cc8-b71f-363eab22b1be" />
-
-<!-- ============================== -->
 
 *Note: `STD_MOTOR`, `STD_CHAIN`, and `STD_MATERIAL` act as read-only lookup tables for the frontend and are not strictly bound by dynamic foreign keys to preserve historical design states.*
 
@@ -255,7 +252,7 @@ For production, the FastAPI server freezes the Q-Table and strictly exploits the
 ## 9. Sequence diagrams
 
 ### 9.1. Main workflow sequence (AI integration)
-> **Note:** For a complete suite of sequence diagrams covering all use cases, see [Sequence Diagrams](docs/uml/4_Sequence_Diagrams.md). Also, see [Activity Diagrams](docs/uml/2_Activity_Diagrams.md) for the equivalent workflow logic.
+See [Sequence Diagrams](docs/uml/4_Sequence_Diagrams.md) and [Activity Diagrams](docs/uml/2_Activity_Diagrams.md) for full flow logic.
 
 ```mermaid
 %%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
