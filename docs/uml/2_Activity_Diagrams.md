@@ -11,7 +11,7 @@ flowchart TD
     Start(( )):::startEnd
     End((( ))):::startEnd
     
-    subgraph User_Lane [Guest / User]
+    subgraph User_Lane [User]
         A1(Choose Login, Register, or Reset)
         A6(Click Link in Email)
         A8(Enter New Password)
@@ -65,7 +65,7 @@ flowchart TD
     Start(( )):::startEnd
     End((( ))):::startEnd
     
-    subgraph User_Lane [Mechanical Engineer]
+    subgraph User_Lane [User]
         A1(Input P_yc, n_yc, u_total, L_h)
         A8(Review AI Suggestion)
         A9(Approve & Continue to Report)

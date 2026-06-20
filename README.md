@@ -32,12 +32,12 @@ See [System Deployment & Component View](docs/uml/5_Deployment_and_Component_Dia
 ### 4.1. User stories & scenarios
 
 **US1: Authentication & Workspace Management**
-- *Story*: As a mechanical engineer, I want to create an account and manage multiple independent design projects so that my work is securely stored and organized.
+- *Story*: As a user, I want to create an account and manage multiple independent design projects so that my work is securely stored and organized.
 - *Scenario 1 (Success)*: User logs in, views the dashboard, and clicks "New Project". A new workspace is instantiated.
 - *Scenario 2 (Exception)*: User attempts to create a project without a name. The system prevents creation and displays an error validation message.
 
 **US2: AI-Assisted Optimization**
-- *Story*: As an engineer, I want the system to automatically suggest the best gear material and width coefficient based on my required power and speed, so that I can minimize gearbox volume without violating stress limits.
+- *Story*: As a user, I want the system to automatically suggest the best gear material and width coefficient based on my required power and speed, so that I can minimize gearbox volume without violating stress limits.
 - *Scenario 1 (Normal Load)*: User inputs $P = 3kW, n = 45rpm$. AI suggests C45 Steel with $\psi_{ba} = 0.3$.
 - *Scenario 2 (Heavy Impact Load)*: User specifies heavy impact. The AI dynamically shifts the state and recommends a stronger material (e.g., 40X Steel) to prevent tooth fracture.
 
@@ -51,7 +51,7 @@ Check out the [Detailed Use Case Diagrams](docs/uml/1_Use_Case_Diagrams.md) for 
 
 ### High-level system use case
 
-*The high-level use case diagram below illustrates the complete MechDrive Studio system boundary, showcasing how the Mechanical Engineer interacts with the main modules (Calculation, AI, Reporting) and how the system delegates data/AI processing to secondary actors (Supabase).*
+*The high-level use case diagram below illustrates the complete MechDrive Studio system boundary, showcasing how the User interacts with the main modules (Calculation, AI, Reporting) and how the system delegates data/AI processing to secondary actors (Supabase).*
 
 <div align="center">
   <img src="docs/uml/uc_high_level.svg" alt="High-Level System Use Case">
@@ -70,67 +70,29 @@ See [Class Diagrams](docs/uml/3_Class_Diagrams.md) for more interface details.
 ```mermaid
 %%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 classDiagram
-    class OptimizationRequest {
+    class AIRequest {
         +float P_yc
         +float n_yc
         +float u_total
         +float L_h
-        +String load_type
-        +dict standards
+        +int load_type
     }
     
-    class AbstractResult {
-        <<abstract>>
-        +float a_w
-        +int z1
-        +int z2
-    }
-    
-    class GearResult {
-        +float m
-        +float sigma_H
-        +float sigma_F
-        +String material
-    }
-    
-    class ChainResult {
-        +float pitch
-        +float F_t
-        +float F_r
-    }
-    
-    AbstractResult <|-- GearResult
-    AbstractResult <|-- ChainResult
-    
-    class State {
-        +float P_dc
-        +float n_dc
-        +float L_h
-        +float u_total
-        +discretize() int
-    }
-    
-    class Action {
-        +String material
-        +float psi_ba
-        +decode() dict
+    class AIResponse {
+        +dict optimal_action
+        +dict physics_details
     }
     
     class AIEngine {
-        -dict q_table
-        -float learning_rate
-        -float discount_factor
-        +discretize_state(P: float, n: float, u: float, L: float) State
-        +get_best_action(s: State) Action
-        +calculate_physics(a: Action) GearResult
-        #update_q_value(s: State, a: Action, r: float) void
+        -dict Q_TABLE
+        +optimize_design(req: AIRequest) AIResponse
+        -discretize(value: float, bins: list) float
+        -gear_design(P_yc, n_yc, u_total, L_h, u_d, psi_ba, matID, gear_type) dict
+        -chain_design(P_kw, n_rpm, u_x, z1, load_type) dict
     }
     
-    AIEngine ..> OptimizationRequest : <<use>>
-    AIEngine --> State : creates
-    AIEngine --> Action : creates
-    AIEngine ..> GearResult : <<creates>>
-    AIEngine ..> ChainResult : <<creates>>
+    AIEngine ..> AIRequest : <<use>>
+    AIEngine ..> AIResponse : <<creates>>
 ```
 
 ### 5.2. Frontend component diagram

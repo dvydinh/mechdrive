@@ -5,17 +5,17 @@
 ```mermaid
 %%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 sequenceDiagram
-    actor Eng as :MechanicalEngineer
+    actor User as :User
     participant UI as ui:ModuleOptimizer
     participant API as api:FastAPIEngine
     participant DB as db:Supabase
 
-    Eng->>UI: inputParams(P_yc, n_yc, u_total, L_h)
+    User->>UI: inputParams(P_yc, n_yc, u_total, L_h)
     activate UI
     UI->>UI: validateData(params)
     
     alt [Invalid Data]
-        UI-->>Eng: Error Message
+        UI-->>User: Error Message
     else [Valid Data]
         UI->>API: POST /ai/optimize-design(params)
         activate API
@@ -43,7 +43,7 @@ sequenceDiagram
         DB-->>UI: OK
         deactivate DB
         
-        UI-->>Eng: Display AI Suggestion & Physics Results
+        UI-->>User: Display AI Suggestion & Physics Results
     end
     deactivate UI
 ```
@@ -53,12 +53,12 @@ sequenceDiagram
 ```mermaid
 %%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 sequenceDiagram
-    actor Guest as :Guest
+    actor User as :User
     participant UI as ui:AuthScreen
     participant Auth as auth:SupabaseAuth
     participant DB as db:Supabase
 
-    Guest->>UI: inputCredentials(email, password, userName)
+    User->>UI: inputCredentials(email, password, userName)
     activate UI
     
     UI->>Auth: signUp(email, password, metadata)
@@ -71,7 +71,7 @@ sequenceDiagram
     DB-->>UI: OK
     deactivate DB
     
-    UI-->>Guest: Success + Check Email for Confirmation
+    UI-->>User: Success + Check Email for Confirmation
     deactivate UI
 ```
 
@@ -80,20 +80,20 @@ sequenceDiagram
 ```mermaid
 %%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 sequenceDiagram
-    actor Guest as :Guest
+    actor User as :User
     participant UI as ui:AuthScreen
     participant Auth as auth:SupabaseAuth
 
-    Guest->>UI: clickForgotPassword()
+    User->>UI: clickForgotPassword()
     activate UI
     
-    Guest->>UI: inputEmail(email)
+    User->>UI: inputEmail(email)
     UI->>Auth: resetPasswordForEmail(email)
     activate Auth
     Auth-->>UI: OK
     deactivate Auth
     
-    UI-->>Guest: Check Email for Reset Link
+    UI-->>User: Check Email for Reset Link
     deactivate UI
 ```
 
@@ -102,11 +102,11 @@ sequenceDiagram
 ```mermaid
 %%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
 sequenceDiagram
-    actor Eng as :MechanicalEngineer
+    actor User as :User
     participant UI as ui:ModuleProjects
     participant DB as db:Supabase
 
-    Eng->>UI: clickDeleteIcon(projectID)
+    User->>UI: clickDeleteIcon(projectID)
     activate UI
     
     UI->>DB: delete("GEAR_TRANS", projectID)
@@ -135,6 +135,6 @@ sequenceDiagram
     deactivate DB
     
     UI->>UI: removeProjectFromState(projectID)
-    UI-->>Eng: Updated Dashboard View
+    UI-->>User: Updated Dashboard View
     deactivate UI
 ```
