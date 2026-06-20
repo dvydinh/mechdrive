@@ -1,5 +1,4 @@
 @startuml
-left to right direction
 skinparam packageStyle rectangle
 
 actor "Mechanical Engineer" as eng
@@ -25,23 +24,23 @@ UC1 -[hidden]down-> UC2
 UC2 -[hidden]down-> UC3
 UC3 -[hidden]down-> UC5
 
-eng --> UC1
-UC1 ..> UC1_1 : <<include>>
-UC1 ..> UC1_2 : <<include>>
+eng -right-> UC1
+UC1 .down.> UC1_1 : <<include>>
+UC1 .down.> UC1_2 : <<include>>
 
-eng --> UC2
-UC2 ..> UC2_1 : <<include>>
-UC2 ..> UC2_2 : <<include>>
+eng -right-> UC2
+UC2 .down.> UC2_1 : <<include>>
+UC2 .down.> UC2_2 : <<include>>
 
-eng --> UC3
-UC3 ..> UC3_2 : <<include>>
-UC3 ..> UC3_3 : <<include>>
+eng -right-> UC3
+UC3 .down.> UC3_2 : <<include>>
+UC3 .down.> UC3_3 : <<include>>
 
-eng --> UC5
+eng -right-> UC5
 
-UC1_2 <-- db
-UC2 <-- db
-UC3 <-- db
-UC5 <-- db
+UC1_2 <-right- db
+UC2 <-right- db
+UC3 <-right- db
+UC5 <-right- db
 
 @enduml
