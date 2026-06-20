@@ -1,4 +1,5 @@
 @startuml
+left to right direction
 skinparam packageStyle rectangle
 
 actor "Mechanical Engineer" as eng
@@ -11,10 +12,10 @@ package "AI Optimizer" {
   usecase "Predict z1, psi_ba, u_d" as UC1_4
 }
 
-eng -right-> UC1
-UC1 .down.> UC1_1 : <<include>>
-UC1 .down.> UC1_2 : <<include>>
-UC1 .down.> UC1_3 : <<include>>
-UC1 .down.> UC1_4 : <<include>>
+eng --> UC1
+UC1 ..> UC1_1 : <<include>>
+UC1 ..> UC1_2 : <<include>>
+UC1 ..> UC1_3 : <<include>>
+UC1 ..> UC1_4 : <<include>>
 
 @enduml

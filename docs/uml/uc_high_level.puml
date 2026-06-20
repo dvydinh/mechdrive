@@ -1,4 +1,5 @@
 @startuml
+left to right direction
 skinparam packageStyle rectangle
 
 actor "Guest" as guest
@@ -16,12 +17,12 @@ UC2 -[hidden]down-> UC3
 
 guest <|- eng : <<inherits>>
 
-guest -right-> UC1
-eng -right-> UC2
-eng -right-> UC3
+guest --> UC1
+eng --> UC2
+eng --> UC3
 
-supa -left-> UC1
-supa -left-> UC2
-supa -left-> UC3
+UC1 <-- supa
+UC2 <-- supa
+UC3 <-- supa
 
 @enduml
