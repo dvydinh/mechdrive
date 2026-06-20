@@ -67,79 +67,13 @@ The system utilizes React functional components on the frontend and Pydantic dat
 
 See [Class Diagrams](docs/uml/3_Class_Diagrams.md) for more interface details.
 
-```mermaid
-%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
-classDiagram
-    class AIRequest {
-        +float P_yc
-        +float n_yc
-        +float u_total
-        +float L_h
-        +int load_type
-    }
-    
-    class AIResponse {
-        +dict optimal_action
-        +dict physics_details
-    }
-    
-    class AIEngine {
-        -dict Q_TABLE
-        +optimize_design(req: AIRequest) AIResponse
-        -discretize(value: float, bins: list) float
-        -gear_design(P_yc, n_yc, u_total, L_h, u_d, psi_ba, matID, gear_type) dict
-        -chain_design(P_kw, n_rpm, u_x, z1, load_type) dict
-    }
-    
-    AIEngine ..> AIRequest : <<use>>
-    AIEngine ..> AIResponse : <<creates>>
-```
+<img width="634" height="537" alt="5 1 drawio" src="https://github.com/user-attachments/assets/7fccc958-0c77-4417-ac9b-c48028078e94" />
+
 
 ### 5.2. Frontend component diagram
 
-```mermaid
-%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
-classDiagram
-    class WebClient {
-        +Session userSession
-        +render() void
-    }
-    
-    class AuthScreen {
-        +login(credentials) void
-        +register(userData) void
-    }
-    
-    class ModuleProjects {
-        -List~Project~ projects
-        +fetchProjects() void
-        +createProject(name: String) void
-        +deleteProject(id: String) void
-    }
-    
-    class ProjectWorkspace {
-        -Project currentProject
-        +deleteScheme(id: String) void
-        +openOptimizer() void
-    }
-    
-    class ModuleOptimizer {
-        -OptimizationRequest formData
-        +runAI() void
-        -validateData() boolean
-    }
-    
-    class SchemeReport {
-        +renderTables(result: GearResult) void
-        +exportData() PDF
-    }
+<img width="634" height="537" alt="5 2 drawio" src="https://github.com/user-attachments/assets/0409b399-b5bf-43e7-8542-8407a97004fc" />
 
-    WebClient *-- AuthScreen : contains
-    WebClient *-- ModuleProjects : contains
-    ModuleProjects *-- ProjectWorkspace : manages
-    ProjectWorkspace *-- ModuleOptimizer : manages
-    ProjectWorkspace *-- SchemeReport : manages
-```
 
 ## 6. Entity-relationship diagram (EERD)
 
@@ -216,83 +150,13 @@ For production, the FastAPI server freezes the Q-Table and strictly exploits the
 ### 9.1. Main workflow sequence (AI integration)
 See [Sequence Diagrams](docs/uml/4_Sequence_Diagrams.md) and [Activity Diagrams](docs/uml/2_Activity_Diagrams.md) for full flow logic.
 
-```mermaid
-%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
-sequenceDiagram
-    actor Eng as :MechanicalEngineer
-    participant UI as ui:ModuleOptimizer
-    participant API as api:AIEngine
-    participant DB as db:SupabaseDB
+<img width="953" height="1474" alt="9 1 drawio (1)" src="https://github.com/user-attachments/assets/993a2975-b521-4b8a-833c-3394dc3ed2fb" />
 
-    Eng->>UI: clickOptimizeBtn(formData)
-    activate UI
-    UI->>UI: validateData(formData)
-    
-    alt [not isValid]
-        UI-->>Eng: renderValidationError()
-    else [isValid]
-        UI->>API: processOptimization(request)
-        activate API
-        API->>API: discretize_state(P_yc, n_yc)
-        
-        loop [until valid action found]
-            API->>API: get_best_action(state)
-            API->>API: calculate_physics(action)
-        end
-        
-        API-->>UI: return DesignResult
-        deactivate API
-        
-        UI->>UI: updateUIState(DesignResult)
-        UI-->>Eng: displayReportTables()
-        
-        opt [user clicks save]
-            Eng->>UI: clickSaveProject()
-            UI->>DB: insert("DESIGN_SCHEME", schemaData)
-            activate DB
-            DB-->>UI: 201 Created
-            deactivate DB
-            UI-->>Eng: renderSuccessToast()
-        end
-    end
-    deactivate UI
-```
 
 ### 9.2. Project management sequence
-```mermaid
-%%{init: {'theme': 'default', 'themeVariables': {'background': '#ffffff'}}}%%
-sequenceDiagram
-    actor Eng as :MechanicalEngineer
-    participant UI as ui:ModuleProjects
-    participant DB as db:SupabaseDB
 
-    Eng->>UI: clickDeleteIcon(projectID)
-    activate UI
-    
-    UI->>DB: delete("GEAR_TRANS", projectID)
-    activate DB
-    DB-->>UI: return status 200
-    deactivate DB
-    
-    UI->>DB: delete("CHAIN_TRANS", projectID)
-    activate DB
-    DB-->>UI: return status 200
-    deactivate DB
-    
-    UI->>DB: delete("DESIGN_SCHEME", projectID)
-    activate DB
-    DB-->>UI: return status 200
-    deactivate DB
-    
-    UI->>DB: delete("PROJECT", projectID)
-    activate DB
-    DB-->>UI: return success
-    deactivate DB
-    
-    UI->>UI: removeProjectFromState(projectID)
-    UI-->>Eng: hideProjectFromView()
-    deactivate UI
-```
+<img width="741" height="776" alt="9 2 drawio" src="https://github.com/user-attachments/assets/26d4f52b-d62c-4746-b756-3c20e808d207" />
+
 
 ## 10. Local deployment
 
