@@ -148,7 +148,7 @@ For production, the FastAPI server freezes the Q-Table and strictly exploits the
 ## 9. Sequence diagrams
 
 ### 9.1. Main workflow sequence (AI integration)
-See [Sequence Diagrams](docs/uml/4_Sequence_Diagrams.md) and [Activity Diagrams](docs/uml/2_Activity_Diagrams.md) for full flow logic.
+See [Sequence Diagrams](docs/uml/4_Sequence_Diagrams.md) for full flow logic.
 
 <img width="953" height="1474" alt="9 1 drawio (1)" src="https://github.com/user-attachments/assets/993a2975-b521-4b8a-833c-3394dc3ed2fb" />
 
