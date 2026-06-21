@@ -40,4 +40,7 @@ The project was realized by the following team members:
 | 2352715 | Tran Thien Loc | Frontend development, UI/UX design, and API integration |
 | 2353350 | Dinh Doan Vy | Backend API development, Q-learning algorithm implementation, and standard data digitization |
 
-Theoretical foundations and algorithms are based on standard mechanical engineering principles, notably "Tinh toan thiet ke he dan dong co khi" by Trinh Chat & Le Van Uyen (2006, Vietnam Education Publishing House). The reinforcement learning implementation relies on the foundational Q-learning concepts introduced by Watkins & Dayan (1992, Machine learning, 8(3)) and the broader framework established by Sutton & Barto (2018, Reinforcement learning: An introduction, MIT press).
+**References:**
+[1] Trinh Chat & Le Van Uyen (2006). Tinh toan thiet ke he dan dong co khi. Vietnam Education Publishing House.
+[2] Watkins, C. J., & Dayan, P. (1992). Q-learning. Machine learning, 8(3), 279-292.
+[3] Sutton, R. S., & Barto, A. G. (2018). Reinforcement learning: An introduction. MIT press.
