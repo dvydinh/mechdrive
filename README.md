@@ -14,9 +14,30 @@ The core optimization module employs tabular Q-learning to simulate the decision
 
 The reward function is formulated to encourage compactness while strictly enforcing mechanical endurance limits. The base reward evaluates geometric optimality by being inversely proportional to the center distance. A heavy penalty is applied if the calculated actual working contact stress or bending stress violates the material's allowable limits. During offline training, the Q-table is updated using the Bellman equation. In production, the backend utilizes the pre-trained Q-table to exploit the highest Q-value corresponding to the current state, ensuring deterministic optimal outputs.
 
-The application is deployed across two main components. For the backend AI microservice, Python 3.9 or higher is required. Users can navigate to the backend directory, install the requirements via `python -m pip install -r requirements.txt`, and start the server using `uvicorn main:app --host 0.0.0.0 --port 8000`. For the frontend web client, Node.js 18 or higher is required. After configuring the environment variables for Supabase, dependencies are installed and the development server is started via `npm install` and `npm run dev`.
+The application is deployed across two main components. For the backend AI microservice, Python 3.9 or higher is required. Users can navigate to the backend directory, install the requirements, and start the server:
+
+```bash
+cd backend
+python -m pip install -r requirements.txt
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+For the frontend web client, Node.js 18 or higher is required. After configuring the environment variables for Supabase, dependencies are installed and the development server is started:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ## Project team and references
-The project was realized by Dinh Nguy Nguyet Ha (requirement specification, use case analysis, and system testing), Duong Le Nhat Duy (database architecture design, SQL schema, and Supabase security policies), Tran Thien Loc (frontend development, UI/UX design, and API integration), and Dinh Doan Vy (backend API development, Q-learning algorithm implementation, and standard data digitization).
+The project was realized by the following team members:
+
+| Student ID | Full name | Role & responsibilities |
+| --- | --- | --- |
+| 2352286 | Dinh Nguy Nguyet Ha | Requirement specification, use case analysis, and system testing |
+| 2352171 | Duong Le Nhat Duy | Database architecture design, SQL schema, and Supabase security policies |
+| 2352715 | Tran Thien Loc | Frontend development, UI/UX design, and API integration |
+| 2353350 | Dinh Doan Vy | Backend API development, Q-learning algorithm implementation, and standard data digitization |
 
 Theoretical foundations and algorithms are based on standard mechanical engineering principles, notably "Tinh toan thiet ke he dan dong co khi" by Trinh Chat & Le Van Uyen (2006, Vietnam Education Publishing House). The reinforcement learning implementation relies on the foundational Q-learning concepts introduced by Watkins & Dayan (1992, Machine learning, 8(3)) and the broader framework established by Sutton & Barto (2018, Reinforcement learning: An introduction, MIT press).
