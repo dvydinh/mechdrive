@@ -4,103 +4,67 @@ Live access: https://mechdrive.vercel.app/
 
 ## 1. Project team
 
-| Student ID | Full name | Role & Responsibilities |
+| Student ID | Full name | Role & responsibilities |
 | --- | --- | --- |
 | 2352286 | Dinh Nguy Nguyet Ha | Requirement specification, use case analysis, and system testing |
 | 2352171 | Duong Le Nhat Duy | Database architecture design, SQL schema, and Supabase security policies |
 | 2352715 | Tran Thien Loc | Frontend development (React/Next.js), UI/UX design, and API integration |
-| 2353350 | Dinh Doan Vy | Backend API development, Q-Learning algorithm implementation, and standard data digitization |
+| 2353350 | Dinh Doan Vy | Backend API development, Q-learning algorithm implementation, and standard data digitization |
 
 ## 2. Abstract
 
-MechDrive Studio is a specialized web-based engineering platform dedicated to the calculation, design, and optimization of mechanical drive systems (specifically mixing drum drives). The project bridges traditional mechanical design theory with artificial intelligence. By applying the tabular Q-Learning reinforcement learning algorithm, the platform automatically analyzes dynamic input parameters to recommend optimal material configurations and transmission ratios. This significantly reduces manual trial-and-error loops and mitigates human calculation errors.
+MechDrive Studio is a specialized web-based engineering platform dedicated to the calculation, design, and optimization of mechanical drive systems (specifically mixing drum drives). The project bridges traditional mechanical design theory with artificial intelligence. By applying the tabular Q-learning reinforcement learning algorithm, the platform automatically analyzes dynamic input parameters to recommend optimal material configurations and transmission ratios. This significantly reduces manual trial-and-error loops and mitigates human calculation errors.
 
 ## 3. System architecture
 
-The system is built upon a microservices-oriented architecture and a Backend-as-a-Service (BaaS) paradigm, ensuring high cohesion and low coupling.
-
-See [System Deployment & Component View](docs/uml/5_Deployment_and_Component_Diagrams.md) for full deployment details.
-
-<div align="center">
-  <img src="docs/uml/deployment.svg" alt="System Deployment Diagram">
-  <br>
-  <em>Figure 3.1: System Deployment and Component Architecture</em>
-</div>
+The system is built upon a microservices-oriented architecture and a backend-as-a-service (BaaS) paradigm, ensuring high cohesion and low coupling.
 
 ## 4. Software engineering: requirements & use cases
 
 ### 4.1. User stories & scenarios
 
-**US1: Authentication & Workspace Management**
+**US1: Authentication & workspace management**
 - *Story*: As a user, I want to create an account and manage multiple independent design projects so that my work is securely stored and organized.
-- *Scenario 1 (Success)*: User logs in, views the dashboard, and clicks "New Project". A new workspace is instantiated.
+- *Scenario 1 (Success)*: User logs in, views the dashboard, and clicks "New project". A new workspace is instantiated.
 - *Scenario 2 (Exception)*: User attempts to create a project without a name. The system prevents creation and displays an error validation message.
 
-**US2: AI-Assisted Optimization**
+**US2: AI-assisted optimization**
 - *Story*: As a user, I want the system to automatically suggest the best gear material and width coefficient based on my required power and speed, so that I can minimize gearbox volume without violating stress limits.
-- *Scenario 1 (Normal Load)*: User inputs $P = 3kW, n = 45rpm$. AI suggests C45 Steel with $\psi_{ba} = 0.3$.
-- *Scenario 2 (Heavy Impact Load)*: User specifies heavy impact. The AI dynamically shifts the state and recommends a stronger material (e.g., 40X Steel) to prevent tooth fracture.
+- *Scenario 1 (Normal load)*: User inputs $P = 3kW, n = 45rpm$. AI suggests C45 steel with $\psi_{ba} = 0.3$.
+- *Scenario 2 (Heavy impact load)*: User specifies heavy impact. The AI dynamically shifts the state and recommends a stronger material (e.g., 40X steel) to prevent tooth fracture.
 
-**US3: Report Generation**
+**US3: Report generation**
 - *Story*: As a student, I want to export or view a highly detailed step-by-step mechanical calculation report to verify the results against my textbook formulas.
-- *Scenario*: Upon successful AI optimization, the user clicks "View Report". The system renders a technical specification sheet detailing $\sigma_H, \sigma_F, a_w, m$, and tension forces.
+- *Scenario*: Upon successful AI optimization, the user clicks "View report". The system renders a technical specification sheet detailing $\sigma_H, \sigma_F, a_w, m$, and tension forces.
 
-### 4.2. Use case diagram
-
-Check out the [Detailed Use Case Diagrams](docs/uml/1_Use_Case_Diagrams.md) for the full breakdown of all subsystems.
-
-### High-level system use case
-
-*The high-level use case diagram below illustrates the complete MechDrive Studio system boundary, showcasing how the User interacts with the main modules (Calculation, AI, Reporting) and how the system delegates data/AI processing to secondary actors (Supabase).*
-
-<div align="center">
-  <img src="docs/uml/uc_high_level.svg" alt="High-Level System Use Case">
-  <br>
-  <em>Figure 4.2: High-Level Use Case Diagram for MechDrive Studio</em>
-</div>
-
-## 5. Software engineering: object-oriented design (class diagrams)
+## 5. Software engineering: object-oriented design
 
 The system utilizes React functional components on the frontend and Pydantic data models on the backend.
 
-### 5.1. Backend class diagram (FastAPI models)
+## 6. Database notes
 
-See [Class Diagrams](docs/uml/3_Class_Diagrams.md) for more interface details.
-
-<img width="634" height="537" alt="5 1 drawio" src="https://github.com/user-attachments/assets/7fccc958-0c77-4417-ac9b-c48028078e94" />
-
-
-### 5.2. Frontend component diagram
-
-<img width="634" height="537" alt="5 2 drawio" src="https://github.com/user-attachments/assets/0409b399-b5bf-43e7-8542-8407a97004fc" />
-
-
-## 6. Entity-relationship diagram (EERD)
-
-<img width="1307" height="1328" alt="Copy of EERD drawio (1)" src="https://github.com/user-attachments/assets/3ae4a8f1-fccd-4cc8-b71f-363eab22b1be" />
-
-*Note: `STD_MOTOR`, `STD_CHAIN`, and `STD_MATERIAL` act as read-only lookup tables for the frontend and are not strictly bound by dynamic foreign keys to preserve historical design states.*
+Note: `STD_MOTOR`, `STD_CHAIN`, and `STD_MATERIAL` act as read-only lookup tables for the frontend and are not strictly bound by dynamic foreign keys to preserve historical design states.
 
 ## 7. Comprehensive mechanical data flow
 
 The mechanical calculation sequence strictly adheres to the standard engineering design process for a mixing drum drive. The data flow travels through 4 distinct phases:
 
-1. **Phase 1: Electric Motor Selection**:
+1. **Phase 1: Electric motor selection**:
    - **Inputs**: Required power $P_{yc}$, required rotational speed $n_{yc}$.
    - **Flow**: Calculates necessary power $P_{ct}$ and synchronous speed $n_{sb}$ considering system efficiency $\eta_{total}$. Looks up the `STD_MOTOR` table to select a motor satisfying $P_{dm} \ge P_{ct}$ and $n_{dm} \approx n_{sb}$.
-2. **Phase 2: Transmission Ratio Distribution**:
+2. **Phase 2: Transmission ratio distribution**:
    - **Inputs**: Motor speed $n_{dm}$, working shaft speed $n_{lv}$.
    - **Flow**: Calculates total ratio $u_{total} = \frac{n_{dm}}{n_{lv}}$. Distributes into chain drive ratio ($u_x$) and gear drive ratio ($u_{br}$) using empirical tables or AI optimization constraints.
-3. **Phase 3: Chain Drive Design**:
+3. **Phase 3: Chain drive design**:
    - **Inputs**: $u_x$, power at input shaft $P_1$, speed $n_1$.
    - **Flow**: Determines pitch $p$, number of teeth $z_1, z_2$, center distance $a$, and chain tension forces $F_t, F_r$. Validates against `STD_CHAIN` constraints.
-4. **Phase 4: Gear Drive Design (AI Optimized)**:
+4. **Phase 4: Gear drive design (AI optimized)**:
    - **Inputs**: $u_{br}$, power $P_2$, torque $T_2$, load type.
-   - **Flow**: Triggers the AI Engine to select the best material and width coefficient. Resolves geometry ($a_w, m, z_1, z_2$) and executes stringent stress verification ($\sigma_H, \sigma_F$).
+   - **Flow**: Triggers the AI engine to select the best material and width coefficient. Resolves geometry ($a_w, m, z_1, z_2$) and executes stringent stress verification ($\sigma_H, \sigma_F$).
 
 ## 8. Q-learning algorithm formulation and parameter definitions
 
-The AI module employs Tabular Q-Learning to simulate the iterative decision-making process of a mechanical engineer, eliminating manual trial-and-error.
+The AI module employs tabular Q-learning to simulate the iterative decision-making process of a mechanical engineer, eliminating manual trial-and-error.
 
 ### 8.1. Variables and state space (S)
 The environment state $S$ is defined by discretizing continuous dynamic inputs to prevent state-space explosion. The discretization function $f(s)$ maps continuous ranges into discrete state bins:
@@ -129,7 +93,7 @@ $$ R = R_{base} + Penalty $$
 - **Penalty**: Represents mechanical failure. A massive negative reward is applied if the calculated stresses violate material limits:
   $$ Penalty = \begin{cases} -1000 & \text{if } \sigma_H > [\sigma_H] \text{ or } \sigma_F > [\sigma_F] \\ 0 & \text{otherwise} \end{cases} $$
 
-**Key Verification Variables Calculated by the Environment:**
+**Key verification variables calculated by the environment:**
 - **$a_w$ (mm)**: Center distance, calculated primarily from $T_2$, $[\sigma_H]$, and $\psi_{ba}$.
 - **$m$ (mm)**: Gear module, selected from standard tables based on center distance $a_w$ and normal ranges ($m = (0.01 \div 0.02) a_w$).
 - **$z_1, z_2$**: Number of teeth for the pinion and gear.
@@ -138,27 +102,14 @@ $$ R = R_{base} + Penalty $$
 - **$\sigma_F$ (MPa)**: Actual working bending stress at the tooth root.
 
 ### 8.4. Q-value update rule
-During offline training, the Q-Table is iteratively updated using the Bellman equation:
+During offline training, the Q-table is iteratively updated using the Bellman equation:
 $$Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha \left[ R_{t+1} + \gamma \max_{a} Q(S_{t+1}, a) - Q(S_t, A_t) \right]$$
 - **$\alpha$**: Learning rate.
 - **$\gamma$**: Discount factor (prioritizing long-term design stability).
 
-For production, the FastAPI server freezes the Q-Table and strictly exploits the highest Q-value corresponding to the current state: $\arg\max_a Q(S_{current}, a)$.
+For production, the FastAPI server freezes the Q-table and strictly exploits the highest Q-value corresponding to the current state: $\arg\max_a Q(S_{current}, a)$.
 
-## 9. Sequence diagrams
-
-### 9.1. Main workflow sequence (AI integration)
-See [Sequence Diagrams](docs/uml/4_Sequence_Diagrams.md) for full flow logic.
-
-<img width="953" height="1474" alt="9 1 drawio (1)" src="https://github.com/user-attachments/assets/993a2975-b521-4b8a-833c-3394dc3ed2fb" />
-
-
-### 9.2. Project management sequence
-
-<img width="741" height="776" alt="9 2 drawio" src="https://github.com/user-attachments/assets/26d4f52b-d62c-4746-b756-3c20e808d207" />
-
-
-## 10. Local deployment
+## 9. Local deployment
 
 ### Backend (AI microservice)
 Requires Python 3.9+.
@@ -176,7 +127,7 @@ npm install
 npm run dev
 ```
 
-## 11. References
+## 10. References
 
 [1] Trinh Chat & Le Van Uyen (2006). Tinh toan thiet ke he dan dong co khi (Vol 1 & 2). Vietnam Education Publishing House.
 
@@ -186,7 +137,7 @@ npm run dev
 
 [4] Internal documentation: Group_8_Final_Report.pdf (Faculty of Mechanical Engineering, Ho Chi Minh City University of Technology).
 
-## 12. Notes
+## 11. Notes
 
 - Refer to the internal `Group_8_Final_Report.pdf` for comprehensive system test cases, reward shaping strategies, and continuous integration procedures.
 - Production deployment requires updating the `allow_origins` CORS policy in `backend/main.py`.
