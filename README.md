@@ -41,6 +41,9 @@ The project was realized by the following team members:
 | 2353350 | Dinh Doan Vy | Backend API development, Q-learning algorithm implementation, and standard data digitization |
 
 **References:**
+
 [1] Trinh Chat & Le Van Uyen (2006). Tinh toan thiet ke he dan dong co khi. Vietnam Education Publishing House.
+
 [2] Watkins, C. J., & Dayan, P. (1992). Q-learning. Machine learning, 8(3), 279-292.
+
 [3] Sutton, R. S., & Barto, A. G. (2018). Reinforcement learning: An introduction. MIT press.
